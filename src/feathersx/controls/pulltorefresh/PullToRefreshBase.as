@@ -12,10 +12,15 @@ import feathersx.controls.*;
 import feathers.controls.List;
 import feathers.data.ListCollection;
 
+import feathersx.controls.pulltorefresh.impl.DefaultEmptyIndicator;
+
+import feathersx.controls.pulltorefresh.impl.DefaultErrorIndicator;
+
 import feathersx.controls.pulltorefresh.impl.DefaultFooter;
 
 import feathersx.controls.pulltorefresh.impl.DefaultHeader;
 import feathersx.controls.pulltorefresh.impl.DefaultHeader;
+import feathersx.controls.pulltorefresh.impl.DefaultLoadingIndicator;
 
 import starling.display.DisplayObject;
 
@@ -33,11 +38,10 @@ public class PullToRefreshBase extends List
 
     public static const INVALIDATION_FLAG_FOOTER:String = "footer";
 
-    public static const STATE_NORMAL:String;
-    public static const STATE_ERROR:String;
-    public static const STATE_EMPTY:String;
-    public static const STATE_LOADING:String;
-    public static const STATE_DISABLED:String;
+    public static const STATE_NORMAL:String = "normal";
+    public static const STATE_LOADING:String = "loading";
+    public static const STATE_ERROR:String = "error";
+    public static const STATE_EMPTY:String = "empty";
 
     //--------------------------------------------------------------------------
     //
@@ -53,6 +57,21 @@ public class PullToRefreshBase extends List
     private static function defaultFooterFactory():Footer
     {
         return new DefaultFooter();
+    }
+
+    private static function defaultErrorIndicatorFactory():DisplayObject
+    {
+        return new DefaultErrorIndicator();
+    }
+
+    private static function defaultEmptyIndicatorFactory():DisplayObject
+    {
+        return new DefaultEmptyIndicator();
+    }
+
+    private static function defaultLoadingIndicatorFactory():DisplayObject
+    {
+        return new DefaultLoadingIndicator();
     }
 
     //--------------------------------------------------------------------------
@@ -93,6 +112,8 @@ public class PullToRefreshBase extends List
 
     protected var hasMoreRecords:Boolean = false;
 
+    protected var currentIndicator:DisplayObject;
+
     //-------------------------------------
     //  Variables: Flags
     //-------------------------------------
@@ -103,15 +124,7 @@ public class PullToRefreshBase extends List
 
     protected var isProceeding:Boolean;
 
-    //-------------------------------------
-    //  showFooterWhenDone
-    //-------------------------------------
-
     public var showFooterWhenDone:Boolean;
-
-    //-------------------------------------
-    //  loadOnInitialize
-    //-------------------------------------
 
     public var loadImmediately:Boolean;
 
@@ -137,24 +150,6 @@ public class PullToRefreshBase extends List
         if (value == _currentState) return;
         _currentState = value;
         invalidate(INVALIDATION_FLAG_STATE);
-    }
-
-    //------------------------------------
-    //  stateToSkinFunction
-    //------------------------------------
-
-    protected var _stateToSkinFunction:Function;
-
-    public function get stateToSkinFunction():Function
-    {
-        return this._stateToSkinFunction;
-    }
-
-    public function set stateToSkinFunction(value:Function):void
-    {
-        if (_stateToSkinFunction == value) return;
-        this._stateToSkinFunction = value;
-        this.invalidate(INVALIDATION_FLAG_STYLES);
     }
 
     //-------------------------------------
@@ -191,6 +186,92 @@ public class PullToRefreshBase extends List
         if (_footerFactory == value) return;
         _footerFactory = value;
         this.invalidate(INVALIDATION_FLAG_HEADER);
+    }
+
+    //-------------------------------------
+    //  loadingIndicatorFactory
+    //-------------------------------------
+
+    private var _loadingIndicatorFactory:Function = defaultLoadingIndicatorFactory;
+
+    public function get loadingIndicatorFactory():Function
+    {
+        return _loadingIndicatorFactory;
+    }
+
+    public function set loadingIndicatorFactory(value:Function):void
+    {
+        if (value == _loadingIndicatorFactory) return;
+        _loadingIndicatorFactory = value;
+        this.invalidate(INVALIDATION_FLAG_STYLES);
+    }
+
+    //-------------------------------------
+    //  emptyIndicatorFactory
+    //-------------------------------------
+
+    private var _emptyIndicatorFactory:Function = defaultEmptyIndicatorFactory;
+
+    public function get emptyIndicatorFactory():Function
+    {
+        return _emptyIndicatorFactory;
+    }
+
+    public function set emptyIndicatorFactory(value:Function):void
+    {
+        if (value == _emptyIndicatorFactory) return;
+        _emptyIndicatorFactory = value;
+        this.invalidate(INVALIDATION_FLAG_STYLES);
+    }
+
+    //-------------------------------------
+    //  errorIndicatorFactory
+    //-------------------------------------
+
+    private var _errorIndicatorFactory:Function = defaultErrorIndicatorFactory;
+
+    public function get errorIndicatorFactory():Function
+    {
+        return _errorIndicatorFactory;
+    }
+
+    public function set errorIndicatorFactory(value:Function):void
+    {
+        if (value == _errorIndicatorFactory) return;
+        _errorIndicatorFactory = value;
+        this.invalidate(INVALIDATION_FLAG_STYLES);
+    }
+
+    //-------------------------------------
+    //  errorString
+    //-------------------------------------
+
+    private var _errorString:String;
+
+    public function get errorString():String
+    {
+        return _errorString;
+    }
+
+    public function set errorString(value:String):void
+    {
+        _errorString = value;
+    }
+
+    //-------------------------------------
+    //  emptyString
+    //-------------------------------------
+
+    private var _emptyString:String;
+
+    public function get emptyString():String
+    {
+        return _emptyString;
+    }
+
+    public function set emptyString(value:String):void
+    {
+        _emptyString = value;
     }
 
     //-------------------------------------
@@ -234,13 +315,23 @@ public class PullToRefreshBase extends List
 
     override protected function draw():void
     {
+        var sizeInvalid:Boolean = isInvalid(INVALIDATION_FLAG_SIZE);
         var stateInvalid:Boolean = isInvalid(INVALIDATION_FLAG_STATE);
         var headerInvalid:Boolean = isInvalid(INVALIDATION_FLAG_HEADER);
         var footerInvalid:Boolean = isInvalid(INVALIDATION_FLAG_FOOTER);
 
         if (stateInvalid)
         {
+            refreshIndicator();
+        }
 
+        if (stateInvalid || sizeInvalid)
+        {
+            if (currentIndicator)
+            {
+                currentIndicator.width = this.actualWidth;
+                currentIndicator.height = this.actualHeight;
+            }
         }
 
         if (headerInvalid)
@@ -295,15 +386,19 @@ public class PullToRefreshBase extends List
                 }
                 else
                 {
-                    if (Math.abs(_verticalScrollPosition) > header.refreshHeight)
+                    if (header.state != HeaderState.FREE)
                     {
-                        header.state = HeaderState.RELEASE;
-                    }
-                    else if (header.state != HeaderState.COMPLETE)
-                    {
-                        header.state = HeaderState.PULL;
+                        if (Math.abs(_verticalScrollPosition) > header.refreshHeight)
+                        {
+                            header.state = HeaderState.RELEASE;
+                        }
+                        else
+                        {
+                            header.state = HeaderState.PULL;
+                        }
                     }
 
+                    headerAsDisplayObject.y = 0;
                     headerAsDisplayObject.height = Math.abs(_verticalScrollPosition)
                 }
             }
@@ -323,14 +418,7 @@ public class PullToRefreshBase extends List
                 {
                     showFooter();
 
-                    if (footer.state == FooterState.LOADING)
-                    {
-                    }
-                    else if (footer.state == FooterState.DONE)
-                    {
-
-                    }
-                    else
+                    if (footer.state != FooterState.LOADING && footer.state != FooterState.DONE)
                     {
                         if (_verticalScrollPosition > _maxVerticalScrollPosition - footer.originalHeight - 40)
                         {
@@ -368,6 +456,16 @@ public class PullToRefreshBase extends List
         }
     }
 
+    override protected function completeScroll():void
+    {
+        super.completeScroll();
+
+        if (header.state == HeaderState.FREE)
+        {
+            header.state = HeaderState.PULL;
+        }
+    }
+
     override protected function throwTo(targetHorizontalScrollPosition:Number = NaN, targetVerticalScrollPosition:Number = NaN, duration:Number = 0.5):void
     {
         if (header.state == HeaderState.RELEASE || header.state == HeaderState.LOADING)
@@ -376,7 +474,10 @@ public class PullToRefreshBase extends List
 
             _minVerticalScrollPosition = -header.refreshHeight;
 
-            targetVerticalScrollPosition = _minVerticalScrollPosition;
+            if (header.state == HeaderState.RELEASE)
+            {
+                targetVerticalScrollPosition = _minVerticalScrollPosition;
+            }
         }
 
         super.throwTo(targetHorizontalScrollPosition, targetVerticalScrollPosition, duration);
@@ -401,57 +502,6 @@ public class PullToRefreshBase extends List
         }
     }
 
-    override protected function completeScroll():void
-    {
-        super.completeScroll();
-
-        if (header.state == HeaderState.COMPLETE)
-        {
-            header.state = HeaderState.PULL;
-        }
-    }
-
-    override protected function refreshBackgroundSkin():void
-    {
-        var oldBackgroundSkin:DisplayObject = currentBackgroundSkin;
-
-        if (_stateToSkinFunction != null)
-        {
-            var newCurrentBackgroundSkin:DisplayObject = DisplayObject(_stateToSkinFunction(this, _currentState, oldBackgroundSkin));
-
-            if(this.currentBackgroundSkin != newCurrentBackgroundSkin)
-            {
-                if(this.currentBackgroundSkin)
-                {
-                    this.removeRawChildInternal(this.currentBackgroundSkin);
-                }
-                this.currentBackgroundSkin = newCurrentBackgroundSkin;
-                if(this.currentBackgroundSkin)
-                {
-                    this.addRawChildAtInternal(this.currentBackgroundSkin, 0);
-                }
-            }
-            if(this.currentBackgroundSkin)
-            {
-                //force it to the bottom
-                this.setRawChildIndexInternal(this.currentBackgroundSkin, 0);
-
-                if(this.originalBackgroundWidth != this.originalBackgroundWidth) //isNaN
-                {
-                    this.originalBackgroundWidth = this.currentBackgroundSkin.width;
-                }
-                if(this.originalBackgroundHeight != this.originalBackgroundHeight) //isNaN
-                {
-                    this.originalBackgroundHeight = this.currentBackgroundSkin.height;
-                }
-            }
-        }
-        else
-        {
-            super.refreshBackgroundSkin();
-        }
-    }
-
     //--------------------------------------------------------------------------
     //
     //  Methods
@@ -470,6 +520,8 @@ public class PullToRefreshBase extends List
             {
                 isLoading = true;
 
+                setCurrentState(STATE_LOADING);
+
                 loadFunction(insertData, handleError);
             }
         }
@@ -477,16 +529,26 @@ public class PullToRefreshBase extends List
 
     protected function insertData(data:Array, hasMoreRecords:Boolean = true):void
     {
-        isLoading = false;
-
         if (_dataProvider == null)
             _dataProvider = new ListCollection();
 
         _dataProvider.data = data;
 
+        isLoading = false;
+
+        if (_dataProvider.length == 0)
+        {
+            setCurrentState(STATE_EMPTY);
+        }
+        else
+        {
+            setCurrentState(STATE_NORMAL);
+        }
+
         this.hasMoreRecords = hasMoreRecords;
 
-        completeFooter();
+        freeHeader();
+        freeFooter();
     }
 
     //--------------------------------------
@@ -495,28 +557,51 @@ public class PullToRefreshBase extends List
 
     protected function refresh():void
     {
-        if (!isRefreshing && !isLoading)
+        if (!isRefreshing)
         {
-            if (refreshFunction != null)
+            if (isLoading)
             {
                 header.state = HeaderState.LOADING;
-
-                refreshFunction(appendData, handleError);
             }
             else
             {
-                completeHeader();
+                if (refreshFunction != null)
+                {
+                    header.state = HeaderState.LOADING;
+
+                    refreshFunction(appendData, handleError);
+                }
+                else
+                {
+                    freeHeader();
+                }
             }
         }
     }
 
     protected function appendData(data:Array):void
     {
-        isRefreshing = false;
-
         _dataProvider.addAllAt(new ListCollection(data), 0);
 
-        completeHeader();
+        isRefreshing = false;
+
+        if (_dataProvider.length == 0)
+        {
+            setCurrentState(STATE_EMPTY);
+        }
+        else
+        {
+            setCurrentState(STATE_NORMAL);
+        }
+
+        freeHeader();
+    }
+
+    protected function refreshError(error:Error):void
+    {
+        isRefreshing = false;
+
+        handleError(error);
     }
 
     //--------------------------------------
@@ -533,31 +618,41 @@ public class PullToRefreshBase extends List
 
                 footer.state = FooterState.LOADING;
 
-                proceedFunction(prependData, handleError);
+                proceedFunction(prependData, proceedError);
             }
             else
             {
-                completeFooter();
+                freeFooter();
             }
         }
     }
 
     protected function prependData(data:Array, hasMoreRecords:Boolean = true):void
     {
+        _dataProvider.addAll(new ListCollection(data));
+
         isProceeding = false;
 
-        _dataProvider.addAll(new ListCollection(data));
+        if (_dataProvider.length == 0)
+        {
+            setCurrentState(STATE_EMPTY);
+        }
+        else
+        {
+            setCurrentState(STATE_NORMAL);
+        }
 
         this.hasMoreRecords = hasMoreRecords;
 
-        completeFooter();
+        freeFooter();
     }
 
-    //--------------------------------------
-    //  Methods: Handlers
-    //--------------------------------------
+    protected function proceedError(error:Error):void
+    {
+        isProceeding = false;
 
-
+        handleError(error);
+    }
 
     //--------------------------------------
     //  Methods: Header
@@ -579,15 +674,18 @@ public class PullToRefreshBase extends List
         }
     }
 
-    protected function completeHeader():void
+    protected function freeHeader():void
     {
-        header.state = HeaderState.COMPLETE;
+        if (header)
+        {
+            header.state = HeaderState.FREE;
 
-        _minVerticalScrollPosition = originalMinScrollPosition;
+            _minVerticalScrollPosition = originalMinScrollPosition;
 
-        originalMinScrollPosition  = NaN;
+            originalMinScrollPosition  = NaN;
 
-        finishScrollingVertically();
+            finishScrollingVertically();
+        }
     }
 
     //--------------------------------------
@@ -610,26 +708,31 @@ public class PullToRefreshBase extends List
         }
     }
 
-    protected function completeFooter():void
+    protected function freeFooter():void
     {
-        if (hasMoreRecords)
+        if (footer)
         {
-            footer.state = HeaderState.PULL;
-        }
-        else
-        {
-            footer.state = FooterState.DONE;
+            if (hasMoreRecords)
+            {
+                footer.state = HeaderState.PULL;
+            }
+            else
+            {
+                footer.state = FooterState.DONE;
+            }
         }
     }
 
     //--------------------------------------
-    //  Methods: Footer
+    //  Methods: Error
     //--------------------------------------
 
     protected function handleError(error:Error):void
     {
-        completeHeader();
-        completeFooter();
+        isLoading = false;
+
+        freeHeader();
+        freeFooter();
 
         if (_dataProvider && _dataProvider.length > 0)
         {
@@ -637,7 +740,58 @@ public class PullToRefreshBase extends List
         }
         else
         {
+            _errorString = String(error);
+
             setCurrentState(STATE_ERROR);
+        }
+    }
+
+    //--------------------------------------
+    //  Methods: FeathersComponent
+    //--------------------------------------
+
+    protected function refreshIndicator():void
+    {
+        var newCurrentIndicator:DisplayObject;
+
+        switch (_currentState)
+        {
+            case STATE_EMPTY :
+                    newCurrentIndicator = _emptyIndicatorFactory != null ? _emptyIndicatorFactory() : null;
+
+                    if (newCurrentIndicator is EmptyIndicator)
+                        EmptyIndicator(newCurrentIndicator).emptyString = _emptyString;
+                break;
+
+            case STATE_ERROR :
+                    newCurrentIndicator = _errorIndicatorFactory != null ? _errorIndicatorFactory() : null;
+
+                    if (newCurrentIndicator is ErrorIndicator)
+                        ErrorIndicator(newCurrentIndicator).errorString = _errorString;
+                break;
+
+            case STATE_LOADING :
+                    newCurrentIndicator = _loadingIndicatorFactory != null ? _loadingIndicatorFactory() : null;
+                break;
+
+            case STATE_NORMAL :
+                    newCurrentIndicator = null;
+                break;
+        }
+
+        if (currentIndicator != newCurrentIndicator)
+        {
+            if (currentIndicator)
+            {
+                this.removeRawChildInternal(this.currentIndicator);
+            }
+
+            currentIndicator = newCurrentIndicator;
+
+            if (currentIndicator)
+            {
+                this.addRawChildInternal(currentIndicator);
+            }
         }
     }
 

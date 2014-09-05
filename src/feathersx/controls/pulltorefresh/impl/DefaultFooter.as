@@ -86,7 +86,7 @@ public class DefaultFooter extends FeathersControl implements Footer
 
         // spinner
 
-        spinner = new Image(Assets.spinner);
+        spinner = new Image(Assets.spinner());
         spinner.pivotX = spinner.width / 2;
         spinner.pivotY = spinner.height / 2;
         spinner.visible = false;

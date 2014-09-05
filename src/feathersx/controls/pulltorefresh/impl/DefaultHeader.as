@@ -95,7 +95,7 @@ public class DefaultHeader extends FeathersControl implements Header
 
         // arrow
 
-        arrow = new Image(Assets.arrow);
+        arrow = new Image(Assets.arrow());
         arrow.pivotX = arrow.width / 2;
         arrow.pivotY = arrow.height / 2;
         arrow.visible = false;
@@ -103,7 +103,7 @@ public class DefaultHeader extends FeathersControl implements Header
 
         // spinner
 
-        spinner = new Image(Assets.spinner);
+        spinner = new Image(Assets.spinner());
         spinner.pivotX = spinner.width / 2;
         spinner.pivotY = spinner.height / 2;
         spinner.visible = false;
@@ -154,7 +154,7 @@ public class DefaultHeader extends FeathersControl implements Header
 
                     break;
 
-                case HeaderState.COMPLETE :
+                case HeaderState.FREE :
 
                     arrow.visible = false;
                     spinner.visible = true;

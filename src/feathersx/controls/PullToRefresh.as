@@ -32,6 +32,14 @@ public class PullToRefresh extends PullToRefreshBase
 
     //--------------------------------------------------------------------------
     //
+    //  Variables
+    //
+    //--------------------------------------------------------------------------
+
+    private var ignoringReset:Boolean = false;
+
+    //--------------------------------------------------------------------------
+    //
     //  Overridden properties
     //
     //--------------------------------------------------------------------------
@@ -61,6 +69,21 @@ public class PullToRefresh extends PullToRefreshBase
 
     //--------------------------------------------------------------------------
     //
+    //  Overridden methods
+    //
+    //--------------------------------------------------------------------------
+
+    override protected function insertData(data:Array, hasMoreRecords:Boolean = true):void
+    {
+        ignoringReset = true;
+
+        super.insertData(data, hasMoreRecords);
+
+        ignoringReset = false;
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Overridden event handlers
     //
     //--------------------------------------------------------------------------
@@ -68,6 +91,11 @@ public class PullToRefresh extends PullToRefreshBase
     override protected function dataProvider_resetHandler(event:Event):void
     {
         super.dataProvider_resetHandler(event);
+
+//        if (!ignoringReset)
+//        {
+            load();
+//        }
     }
 }
 }

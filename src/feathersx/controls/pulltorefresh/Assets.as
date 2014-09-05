@@ -23,40 +23,67 @@ import starling.textures.Texture;
 
 public class Assets
 {
+    //--------------------------------------------------------------------------
+    //
+    //  Class constants
+    //
+    //--------------------------------------------------------------------------
+
     [Embed(source="/fonts/fontawesome-webfont.ttf", fontName="FontAwesome", mimeType="application/x-font-truetype",
-            embedAsCFF="true", fontStyle="normal", fontWeight="normal", unicodeRange="U+F1CE, U+F0AB")]
+            embedAsCFF="true", fontStyle="normal", fontWeight="normal", unicodeRange="U+F1CE, U+F0AB, U+F071, U+F01C")]
     private static const FONT_AWESOME:Class;
 
     private static const FONT_DESCRIPTION:FontDescription =
         new FontDescription("FontAwesome", FontWeight.NORMAL, FontPosture.NORMAL, FontLookup.EMBEDDED_CFF);
 
-    private static var _arrow:Texture;
+    //--------------------------------------------------------------------------
+    //
+    //  Class getters
+    //
+    //--------------------------------------------------------------------------
 
-    public static function get arrow():Texture
+    public static function arrow(options:Object=null):Texture
     {
-        if (_arrow == null)
-        {
-            _arrow = createTextureFromGlyph("\uF0AB");
-        }
-
-        return _arrow;
+        return createTextureFromGlyph("\uF0AB", options);
     }
 
-    private static var _spinner:Texture;
-
-    public static function get spinner():Texture
+    public static function spinner(options:Object=null):Texture
     {
-        if (_spinner == null)
-        {
-            _spinner = createTextureFromGlyph("\uF1CE");
-        }
-
-        return _spinner;
+        return createTextureFromGlyph("\uF1CE", options);
     }
 
-    private static function createTextureFromGlyph(glyph:String):Texture
+    public static function warning(options:Object=null):Texture
     {
-        var element:TextElement = new TextElement(glyph, new ElementFormat(FONT_DESCRIPTION, 25, 0x333333));
+        return createTextureFromGlyph("\uF071", options);
+    }
+
+    public static function inbox(options:Object = null):Texture
+    {
+        return createTextureFromGlyph("\uF01C", options);
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Class functions
+    //
+    //--------------------------------------------------------------------------
+
+    private static function createTextureFromGlyph(glyph:String, options:Object=null):Texture
+    {
+        var format:ElementFormat = new ElementFormat(FONT_DESCRIPTION, 25, 0xEEEEEE);
+
+        if (options != null)
+        {
+            for (var name:String in options)
+            {
+                if (format.hasOwnProperty(name))
+                {
+                    format[name] = options[name];
+                }
+            }
+        }
+
+        var element:TextElement = new TextElement(glyph, format);
 
         var arrowBlock:TextBlock = new TextBlock(element);
         var arrowTextLine:TextLine = arrowBlock.createTextLine(null);

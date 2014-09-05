@@ -12,6 +12,6 @@ public class HeaderState
     public static const PULL:String = "pull";
     public static const RELEASE:String = "release";
     public static const LOADING:String = "loading";
-    public static const COMPLETE:String = "complete";
+    public static const FREE:String = "free";
 }
 }
