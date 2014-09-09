@@ -83,10 +83,6 @@ public class PullToRefreshBase extends List
     public function PullToRefreshBase()
     {
         super();
-
-        padding = 20;
-
-//        scrollBarDisplayMode = "none";
     }
 
     //--------------------------------------------------------------------------
@@ -291,6 +287,24 @@ public class PullToRefreshBase extends List
     //-------------------------------------
 
     public var proceedFunction:Function;
+
+    //-------------------------------------
+    //  insertDataFunction
+    //-------------------------------------
+
+    public var insertDataFunction:Function;
+
+    //-------------------------------------
+    //  appendDataFunction
+    //-------------------------------------
+
+    public var appendDataFunction:Function;
+
+    //-------------------------------------
+    //  prependDataFunction
+    //-------------------------------------
+
+    public var prependDataFunction:Function;
 
     //--------------------------------------------------------------------------
     //
@@ -532,7 +546,14 @@ public class PullToRefreshBase extends List
         if (_dataProvider == null)
             _dataProvider = new ListCollection();
 
-        _dataProvider.data = data;
+        if (insertDataFunction != null)
+        {
+            insertDataFunction(data);
+        }
+        else
+        {
+            _dataProvider.data = data;
+        }
 
         isLoading = false;
 
@@ -581,7 +602,14 @@ public class PullToRefreshBase extends List
 
     protected function appendData(data:Array):void
     {
-        _dataProvider.addAllAt(new ListCollection(data), 0);
+        if (appendDataFunction != null)
+        {
+            appendDataFunction(data);
+        }
+        else
+        {
+            _dataProvider.addAllAt(new ListCollection(data), 0);
+        }
 
         isRefreshing = false;
 
@@ -629,7 +657,14 @@ public class PullToRefreshBase extends List
 
     protected function prependData(data:Array, hasMoreRecords:Boolean = true):void
     {
-        _dataProvider.addAll(new ListCollection(data));
+        if (prependDataFunction != null)
+        {
+            prependDataFunction(data);
+        }
+        else
+        {
+            _dataProvider.addAll(new ListCollection(data));
+        }
 
         isProceeding = false;
 

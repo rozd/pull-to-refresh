@@ -12,8 +12,10 @@ import feathers.data.ListCollection;
 import feathersx.controls.pulltorefresh.Provider;
 
 import feathersx.controls.pulltorefresh.PullToRefreshBase;
+import feathersx.controls.pulltorefresh.event.ProviderEvent;
 
 import starling.events.Event;
+import starling.events.EventDispatcher;
 
 public class PullToRefresh extends PullToRefreshBase
 {
@@ -32,14 +34,6 @@ public class PullToRefresh extends PullToRefreshBase
 
     //--------------------------------------------------------------------------
     //
-    //  Variables
-    //
-    //--------------------------------------------------------------------------
-
-    private var ignoringReset:Boolean = false;
-
-    //--------------------------------------------------------------------------
-    //
     //  Overridden properties
     //
     //--------------------------------------------------------------------------
@@ -48,7 +42,12 @@ public class PullToRefresh extends PullToRefreshBase
     {
         if (_dataProvider == value) return;
 
-        if (_dataProvider)
+        if (_dataProvider is EventDispatcher)
+        {
+            EventDispatcher(_dataProvider).removeEventListener(ProviderEvent.RELOAD, dataProvider_reloadHandler);
+        }
+
+        if (_dataProvider is Provider)
         {
             loadFunction = null;
             refreshFunction = null;
@@ -56,6 +55,11 @@ public class PullToRefresh extends PullToRefreshBase
         }
 
         super.dataProvider = value;
+
+        if (_dataProvider is EventDispatcher)
+        {
+            EventDispatcher(_dataProvider).addEventListener(ProviderEvent.RELOAD, dataProvider_reloadHandler);
+        }
 
         if (_dataProvider is Provider)
         {
@@ -69,33 +73,13 @@ public class PullToRefresh extends PullToRefreshBase
 
     //--------------------------------------------------------------------------
     //
-    //  Overridden methods
+    //  Event handlers
     //
     //--------------------------------------------------------------------------
 
-    override protected function insertData(data:Array, hasMoreRecords:Boolean = true):void
+    private function dataProvider_reloadHandler(event:Event):void
     {
-        ignoringReset = true;
-
-        super.insertData(data, hasMoreRecords);
-
-        ignoringReset = false;
-    }
-
-    //--------------------------------------------------------------------------
-    //
-    //  Overridden event handlers
-    //
-    //--------------------------------------------------------------------------
-
-    override protected function dataProvider_resetHandler(event:Event):void
-    {
-        super.dataProvider_resetHandler(event);
-
-//        if (!ignoringReset)
-//        {
-            load();
-//        }
+        load();
     }
 }
 }

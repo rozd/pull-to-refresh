@@ -9,10 +9,10 @@ package feathersx.controls.pulltorefresh
 {
 public interface Provider
 {
-    function load(result:Function, error:Function):void;
+    function load(resultHandler:Function, errorHandler:Function):void;
 
-    function refresh(result:Function, error:Function):void;
+    function refresh(resultHandler:Function, errorHandler:Function):void;
 
-    function proceed(result:Function, error:Function):void;
+    function proceed(resultHandler:Function, errorHandler:Function):void;
 }
 }
