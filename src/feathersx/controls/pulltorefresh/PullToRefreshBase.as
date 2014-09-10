@@ -753,9 +753,11 @@ public class PullToRefreshBase extends List
             0.1);
         }
 
-        if (_bounceBackMode == BounceBackMode.STAY_IN_PLACE)
+        if (_bounceBackMode == BounceBackMode.STAY_IN_PLACE && previousMaxScrollPosition == previousMaxScrollPosition)
         {
             this.verticalScrollPosition = _maxVerticalScrollPosition - previousMaxScrollPosition - header.refreshHeight;
+
+            previousMaxScrollPosition = NaN;
         }
     }
 
