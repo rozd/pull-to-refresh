@@ -7,25 +7,17 @@
  */
 package feathersx.controls.pulltorefresh
 {
-import feathersx.controls.*;
-
 import feathers.controls.List;
 import feathers.data.ListCollection;
 
 import feathersx.controls.pulltorefresh.impl.DefaultEmptyIndicator;
-
 import feathersx.controls.pulltorefresh.impl.DefaultErrorIndicator;
-
 import feathersx.controls.pulltorefresh.impl.DefaultFooter;
-
-import feathersx.controls.pulltorefresh.impl.DefaultHeader;
 import feathersx.controls.pulltorefresh.impl.DefaultHeader;
 import feathersx.controls.pulltorefresh.impl.DefaultLoadingIndicator;
 
 import starling.core.Starling;
-
 import starling.display.DisplayObject;
-
 import starling.events.Event;
 
 public class PullToRefreshBase extends List
@@ -44,10 +36,6 @@ public class PullToRefreshBase extends List
     public static const STATE_LOADING:String = "loading";
     public static const STATE_ERROR:String = "error";
     public static const STATE_EMPTY:String = "empty";
-
-    public static const JUMP_TO_EDGE:String = "jumpToEdge";
-
-    public static const STAY_IN_PLACE:String = "stayInPlace";
 
     //--------------------------------------------------------------------------
     //
@@ -141,7 +129,7 @@ public class PullToRefreshBase extends List
     //  bounceBackMode
     //-------------------------------------
 
-    private var _bounceBackMode:String = JUMP_TO_EDGE;
+    private var _bounceBackMode:String = BounceBackMode.JUMP_TO_EDGE;
 
     public function get bounceBackMode():String
     {
@@ -744,7 +732,7 @@ public class PullToRefreshBase extends List
 
             originalMinScrollPosition  = NaN;
 
-            if (_bounceBackMode == JUMP_TO_EDGE || _maxVerticalScrollPosition <= 0)
+            if (_bounceBackMode == BounceBackMode.JUMP_TO_EDGE || _maxVerticalScrollPosition <= 0)
             {
                 finishScrollingVertically();
             }
@@ -765,7 +753,7 @@ public class PullToRefreshBase extends List
             0.1);
         }
 
-        if (_bounceBackMode == STAY_IN_PLACE)
+        if (_bounceBackMode == BounceBackMode.STAY_IN_PLACE)
         {
             this.verticalScrollPosition = _maxVerticalScrollPosition - previousMaxScrollPosition - header.refreshHeight;
         }
