@@ -9,6 +9,12 @@ package feathersx.controls.pulltorefresh
 {
 public interface Provider
 {
+    function get insertDataFunction():Function;
+
+    function get appendDataFunction():Function;
+
+    function get prependDataFunction():Function;
+
     function load(resultHandler:Function, errorHandler:Function):void;
 
     function refresh(resultHandler:Function, errorHandler:Function):void;

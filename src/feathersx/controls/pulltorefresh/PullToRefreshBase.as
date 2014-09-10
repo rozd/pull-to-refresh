@@ -541,7 +541,7 @@ public class PullToRefreshBase extends List
         }
     }
 
-    protected function insertData(data:Array, hasMoreRecords:Boolean = true):void
+    protected function insertData(data:Array, hasMoreRecords:Boolean = false):void
     {
         if (_dataProvider == null)
             _dataProvider = new ListCollection();
@@ -655,7 +655,7 @@ public class PullToRefreshBase extends List
         }
     }
 
-    protected function prependData(data:Array, hasMoreRecords:Boolean = true):void
+    protected function prependData(data:Array, hasMoreRecords:Boolean = false):void
     {
         if (prependDataFunction != null)
         {

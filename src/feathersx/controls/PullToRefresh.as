@@ -49,9 +49,9 @@ public class PullToRefresh extends PullToRefreshBase
 
         if (_dataProvider is Provider)
         {
-            loadFunction = null;
-            refreshFunction = null;
-            proceedFunction = null;
+            loadFunction = refreshFunction = proceedFunction = null;
+
+            insertDataFunction = appendDataFunction = prependDataFunction = null;
         }
 
         super.dataProvider = value;
@@ -66,6 +66,10 @@ public class PullToRefresh extends PullToRefreshBase
             loadFunction = Provider(_dataProvider).load;
             refreshFunction = Provider(_dataProvider).refresh;
             proceedFunction = Provider(_dataProvider).proceed;
+
+            insertDataFunction = Provider(_dataProvider).insertDataFunction;
+            appendDataFunction = Provider(_dataProvider).appendDataFunction;
+            prependDataFunction = Provider(_dataProvider).prependDataFunction;
         }
 
         load();
