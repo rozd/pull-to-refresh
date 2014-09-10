@@ -22,6 +22,8 @@ import feathersx.controls.pulltorefresh.impl.DefaultHeader;
 import feathersx.controls.pulltorefresh.impl.DefaultHeader;
 import feathersx.controls.pulltorefresh.impl.DefaultLoadingIndicator;
 
+import starling.core.Starling;
+
 import starling.display.DisplayObject;
 
 import starling.events.Event;
@@ -42,6 +44,10 @@ public class PullToRefreshBase extends List
     public static const STATE_LOADING:String = "loading";
     public static const STATE_ERROR:String = "error";
     public static const STATE_EMPTY:String = "empty";
+
+    public static const JUMP_TO_EDGE:String = "jumpToEdge";
+
+    public static const STAY_IN_PLACE:String = "stayInPlace";
 
     //--------------------------------------------------------------------------
     //
@@ -105,6 +111,7 @@ public class PullToRefreshBase extends List
 
     private var originalMinScrollPosition:Number = NaN;
     private var originalMaxScrollPosition:Number = NaN;
+    private var previousMaxScrollPosition:Number = NaN;
 
     protected var hasMoreRecords:Boolean = false;
 
@@ -129,6 +136,22 @@ public class PullToRefreshBase extends List
     //  Properties
     //
     //--------------------------------------------------------------------------
+
+    //-------------------------------------
+    //  bounceBackMode
+    //-------------------------------------
+
+    private var _bounceBackMode:String = JUMP_TO_EDGE;
+
+    public function get bounceBackMode():String
+    {
+        return _bounceBackMode;
+    }
+
+    public function set bounceBackMode(value:String):void
+    {
+        _bounceBackMode = value;
+    }
 
     //-------------------------------------
     //  currentState
@@ -590,7 +613,9 @@ public class PullToRefreshBase extends List
                 {
                     header.state = HeaderState.LOADING;
 
-                    refreshFunction(appendData, handleError);
+                    refreshFunction(appendData, refreshError);
+
+                    previousMaxScrollPosition = _maxVerticalScrollPosition;
                 }
                 else
                 {
@@ -719,7 +744,30 @@ public class PullToRefreshBase extends List
 
             originalMinScrollPosition  = NaN;
 
-            finishScrollingVertically();
+            if (_bounceBackMode == JUMP_TO_EDGE || _maxVerticalScrollPosition <= 0)
+            {
+                finishScrollingVertically();
+            }
+        }
+    }
+
+    override protected function clampScrollPositions():void
+    {
+        super.clampScrollPositions();
+
+        if (header.state == HeaderState.FREE)
+        {
+            Starling.juggler.delayCall(
+                function():void
+                {
+                    header.state = HeaderState.PULL;
+                },
+            0.1);
+        }
+
+        if (_bounceBackMode == STAY_IN_PLACE)
+        {
+            this.verticalScrollPosition = _maxVerticalScrollPosition - previousMaxScrollPosition - header.refreshHeight;
         }
     }
 
