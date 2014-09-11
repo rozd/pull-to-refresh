@@ -99,7 +99,9 @@ public class PullToRefreshBase extends List
 
     private var originalMinScrollPosition:Number = NaN;
     private var originalMaxScrollPosition:Number = NaN;
+
     private var previousMaxScrollPosition:Number = NaN;
+    private var previousScrollPosition:Number = NaN;
 
     protected var hasMoreRecords:Boolean = false;
 
@@ -728,6 +730,8 @@ public class PullToRefreshBase extends List
         {
             header.state = HeaderState.FREE;
 
+            stopScrolling();
+
             _minVerticalScrollPosition = originalMinScrollPosition;
 
             originalMinScrollPosition  = NaN;
@@ -735,6 +739,10 @@ public class PullToRefreshBase extends List
             if (_bounceBackMode == BounceBackMode.JUMP_TO_EDGE || _maxVerticalScrollPosition <= 0)
             {
                 finishScrollingVertically();
+            }
+            else
+            {
+                previousScrollPosition = _verticalScrollPosition;
             }
         }
     }
@@ -753,11 +761,22 @@ public class PullToRefreshBase extends List
             0.1);
         }
 
-        if (_bounceBackMode == BounceBackMode.STAY_IN_PLACE && previousMaxScrollPosition == previousMaxScrollPosition)
+        if (_bounceBackMode == BounceBackMode.STAY_IN_PLACE && previousMaxScrollPosition == previousMaxScrollPosition && previousScrollPosition == previousScrollPosition)
         {
-            this.verticalScrollPosition = _maxVerticalScrollPosition - previousMaxScrollPosition - header.refreshHeight;
+            var targetScrollPosition:Number = _maxVerticalScrollPosition - previousMaxScrollPosition + previousScrollPosition;
 
-            previousMaxScrollPosition = NaN;
+            if (targetScrollPosition < _minVerticalScrollPosition)
+            {
+                targetScrollPosition = _minVerticalScrollPosition;
+            }
+            else if (targetScrollPosition > _maxVerticalScrollPosition)
+            {
+                targetScrollPosition = _maxVerticalScrollPosition;
+            }
+
+            this.verticalScrollPosition = targetScrollPosition;
+
+            previousMaxScrollPosition = previousScrollPosition = NaN;
         }
     }
 
