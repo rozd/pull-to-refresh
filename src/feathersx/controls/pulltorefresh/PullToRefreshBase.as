@@ -321,13 +321,6 @@ public class PullToRefreshBase extends List
 
     //--------------------------------------------------------------------------
     //
-    //  Overridden properties
-    //
-    //--------------------------------------------------------------------------
-
-
-    //--------------------------------------------------------------------------
-    //
     //  Overridden methods
     //
     //--------------------------------------------------------------------------
@@ -368,8 +361,11 @@ public class PullToRefreshBase extends List
                 this.removeRawChildInternal(DisplayObject(header), true);
             }
 
-            header = Header(_headerFactory());
-            addRawChildInternal(DisplayObject(header));
+            if (_headerFactory != null)
+            {
+                header = Header(_headerFactory());
+                addRawChildInternal(DisplayObject(header));
+            }
         }
 
         if (footerInvalid)
@@ -379,8 +375,11 @@ public class PullToRefreshBase extends List
                 this.removeRawChildInternal(DisplayObject(footer), true);
             }
 
-            footer = Footer(_footerFactory());
-            addRawChildInternal(DisplayObject(footer));
+            if (_footerFactory != null)
+            {
+                footer = Footer(_footerFactory());
+                addRawChildInternal(DisplayObject(footer));
+            }
         }
 
         super.draw();
@@ -472,14 +471,20 @@ public class PullToRefreshBase extends List
     {
         super.finishScrollingVertically();
 
-        if (header.state == HeaderState.RELEASE)
+        if (header)
         {
-            refresh();
+            if (header.state == HeaderState.RELEASE)
+            {
+                refresh();
+            }
         }
 
-        if (footer.state == FooterState.RELEASE)
+        if (footer)
         {
-            proceed();
+            if (footer.state == FooterState.RELEASE)
+            {
+                proceed();
+            }
         }
     }
 
@@ -487,23 +492,29 @@ public class PullToRefreshBase extends List
     {
         super.completeScroll();
 
-        if (header.state == HeaderState.FREE)
+        if (header)
         {
-            header.state = HeaderState.PULL;
+            if (header.state == HeaderState.FREE)
+            {
+                header.state = HeaderState.PULL;
+            }
         }
     }
 
     override protected function throwTo(targetHorizontalScrollPosition:Number = NaN, targetVerticalScrollPosition:Number = NaN, duration:Number = 0.5):void
     {
-        if (header.state == HeaderState.RELEASE || header.state == HeaderState.LOADING)
+        if (header)
         {
-            originalMinScrollPosition = _minVerticalScrollPosition;
-
-            _minVerticalScrollPosition = -header.refreshHeight;
-
-            if (header.state == HeaderState.RELEASE)
+            if (header.state == HeaderState.RELEASE || header.state == HeaderState.LOADING)
             {
-                targetVerticalScrollPosition = _minVerticalScrollPosition;
+                originalMinScrollPosition = _minVerticalScrollPosition;
+
+                _minVerticalScrollPosition = -header.refreshHeight;
+
+                if (header.state == HeaderState.RELEASE)
+                {
+                    targetVerticalScrollPosition = _minVerticalScrollPosition;
+                }
             }
         }
 
@@ -514,18 +525,24 @@ public class PullToRefreshBase extends List
     {
         super.refreshMinAndMaxScrollPositions();
 
-        if (header.state == HeaderState.LOADING)
+        if (header)
         {
-            originalMinScrollPosition = _minVerticalScrollPosition;
+            if (header.state == HeaderState.LOADING)
+            {
+                originalMinScrollPosition = _minVerticalScrollPosition;
 
-            _minVerticalScrollPosition = -header.refreshHeight;
+                _minVerticalScrollPosition = -header.refreshHeight;
+            }
         }
 
-        if (hasMoreRecords)
+        if (footer)
         {
-            originalMaxScrollPosition = _maxVerticalScrollPosition;
+            if (hasMoreRecords)
+            {
+                originalMaxScrollPosition = _maxVerticalScrollPosition;
 
-            _maxVerticalScrollPosition = _maxVerticalScrollPosition + footer.originalHeight;
+                _maxVerticalScrollPosition = _maxVerticalScrollPosition + footer.originalHeight;
+            }
         }
     }
 
