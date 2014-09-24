@@ -12,9 +12,5 @@ public class BounceBackMode
     public static const JUMP_TO_EDGE:String = "jumpToEdge";
 
     public static const STAY_IN_PLACE:String = "stayInPlace";
-
-    public function BounceBackMode()
-    {
-    }
 }
 }

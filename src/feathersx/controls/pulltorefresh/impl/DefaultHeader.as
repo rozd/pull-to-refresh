@@ -168,21 +168,21 @@ public class DefaultHeader extends FeathersControl implements Header
 
         if (sizeInvalid)
         {
-            var percent:Number = Math.min(1.0, actualHeight / refreshHeight);
+            var percent:Number = Math.min(1.0, actualHeight / headerHeight);
 
             if (arrow != null)
             {
                 arrow.x = actualWidth / 2;
 
 
-                arrow.y = -arrow.height / 2 + percent * (arrow.height / 2 + refreshHeight / 2);
+                arrow.y = -arrow.height / 2 + percent * (arrow.height / 2 + headerHeight / 2);
             }
 
             if (spinner != null)
             {
                 spinner.x = actualWidth / 2;
 
-                spinner.y = -spinner.height / 2 + percent * (spinner.height / 2 + refreshHeight / 2);
+                spinner.y = -spinner.height / 2 + percent * (spinner.height / 2 + headerHeight / 2);
             }
 
             background.width = actualWidth;
@@ -198,7 +198,7 @@ public class DefaultHeader extends FeathersControl implements Header
     //
     //--------------------------------------------------------------------------
 
-    public function get refreshHeight():Number
+    public function get headerHeight():Number
     {
         return 52;
     }

@@ -28,13 +28,22 @@ public class PullToRefreshBase extends List
     //
     //--------------------------------------------------------------------------
 
+    /** Invalidation flag that indicates that Header appearance has changed.*/
     public static const INVALIDATION_FLAG_HEADER:String = "header";
 
+    /** Invalidation flag that indicates that Footer appearance has changed.*/
     public static const INVALIDATION_FLAG_FOOTER:String = "footer";
 
+    /** Indicates normal state. */
     public static const STATE_NORMAL:String = "normal";
+
+    /** Indicates loading state, when LoadingIndicator could be shown. */
     public static const STATE_LOADING:String = "loading";
+
+    /** Indicates error state, when ErrorIndicator could be shown. */
     public static const STATE_ERROR:String = "error";
+
+    /** Indicates empty state, when EmptyIndicator could be shown. */
     public static const STATE_EMPTY:String = "empty";
 
     //--------------------------------------------------------------------------
@@ -93,6 +102,8 @@ public class PullToRefreshBase extends List
 
     protected var footer:Footer;
 
+    protected var currentIndicator:DisplayObject;
+
     //-------------------------------------
     //  Variables: Internal
     //-------------------------------------
@@ -103,22 +114,26 @@ public class PullToRefreshBase extends List
     private var previousMaxScrollPosition:Number = NaN;
     private var previousScrollPosition:Number = NaN;
 
-    protected var hasMoreRecords:Boolean = false;
-
-    protected var currentIndicator:DisplayObject;
-
     //-------------------------------------
     //  Variables: Flags
     //-------------------------------------
 
+    /** Indicates if Server has data to proceed */
+    protected var hasMoreRecords:Boolean = false;
+
+    /** Indicates if loading initial data in progress */
     protected var isLoading:Boolean;
 
+    /** Indicates if loading new data in progress */
     protected var isRefreshing:Boolean;
 
+    /** Indicates if loading previous data in progress */
     protected var isProceeding:Boolean;
 
+    /** Indicates if Footer is visible when there is no previous data on the Server */
     public var showFooterWhenDone:Boolean;
 
+    /** Indicates if loading should be started immediately on List created. */
     public var loadImmediately:Boolean;
 
     //--------------------------------------------------------------------------
@@ -131,13 +146,21 @@ public class PullToRefreshBase extends List
     //  bounceBackMode
     //-------------------------------------
 
+    /** @private */
     private var _bounceBackMode:String = BounceBackMode.JUMP_TO_EDGE;
 
+    /**
+     * Specifies bounce back mode.
+     * When refresh is complete and there are new data, scrolling could
+     * jump to the first item in the List (BounceBackMode.JUMP_TO_EDGE) or
+     * stay at same place (BounceBackMode.STAY_IN_PLACE).
+     */
     public function get bounceBackMode():String
     {
         return _bounceBackMode;
     }
 
+    /** @private */
     public function set bounceBackMode(value:String):void
     {
         _bounceBackMode = value;
@@ -147,13 +170,18 @@ public class PullToRefreshBase extends List
     //  currentState
     //-------------------------------------
 
+    /** @private */
     private var _currentState:String = STATE_NORMAL;
 
+    /**
+     * Indicates current state.
+     */
     public function get currentState():String
     {
         return _currentState;
     }
 
+    /** @private */
     protected function setCurrentState(value:String):void
     {
         if (value == _currentState) return;
@@ -165,13 +193,27 @@ public class PullToRefreshBase extends List
     //  headerFactory
     //-------------------------------------
 
+    /** @private */
     private var _headerFactory:Function = defaultHeaderFactory;
 
+    /**
+     * A function that used to create Header instance.
+     *
+     * <listing version="3.0">
+     * pullToRefresh.headerFactory = function():DisplayObject
+     * {
+     *     return new DefaultHeader();
+     * }
+     * </listing>
+     *
+     * @see Header
+     */
     public function get headerFactory():Function
     {
         return _headerFactory;
     }
 
+    /** @private */
     public function set headerFactory(value:Function):void
     {
         if (_headerFactory == value) return;
@@ -183,31 +225,59 @@ public class PullToRefreshBase extends List
     //  footerFactory
     //-------------------------------------
 
+    /** @private */
     private var _footerFactory:Function = defaultFooterFactory;
 
+    /**
+     * A function that used to create Footer instance.
+     *
+     * <listing version="3.0">
+     * pullToRefresh.footerFactory = function():DisplayObject
+     * {
+     *     return new DefaultFooter();
+     * }
+     * </listing>
+     *
+     * @see Footer
+     */
     public function get footerFactory():Function
     {
         return _footerFactory;
     }
 
+    /** @private */
     public function set footerFactory(value:Function):void
     {
         if (_footerFactory == value) return;
         _footerFactory = value;
-        this.invalidate(INVALIDATION_FLAG_HEADER);
+        this.invalidate(INVALIDATION_FLAG_FOOTER);
     }
 
     //-------------------------------------
     //  loadingIndicatorFactory
     //-------------------------------------
 
+    /** @private */
     private var _loadingIndicatorFactory:Function = defaultLoadingIndicatorFactory;
 
+    /**
+     * A function that used to create LoadingIndicator instance.
+     *
+     * <listing version="3.0">
+     * pullToRefresh.loadingIndicatorFactory = function():DisplayObject
+     * {
+     *     return new DefaultLoadingIndicator();
+     * }
+     * </listing>
+     *
+     * @see LoadingIndicator
+     */
     public function get loadingIndicatorFactory():Function
     {
         return _loadingIndicatorFactory;
     }
 
+    /** @private */
     public function set loadingIndicatorFactory(value:Function):void
     {
         if (value == _loadingIndicatorFactory) return;
@@ -219,13 +289,27 @@ public class PullToRefreshBase extends List
     //  emptyIndicatorFactory
     //-------------------------------------
 
+    /** @private */
     private var _emptyIndicatorFactory:Function = defaultEmptyIndicatorFactory;
 
+    /**
+     * A function that used to create EmptyIndicator instance.
+     *
+     * <listing version="3.0">
+     * pullToRefresh.emptyIndicatorFactory = function():DisplayObject
+     * {
+     *     return new DefaultEmptyIndicator();
+     * }
+     * </listing>
+     *
+     * @see EmptyIndicator
+     */
     public function get emptyIndicatorFactory():Function
     {
         return _emptyIndicatorFactory;
     }
 
+    /** @private */
     public function set emptyIndicatorFactory(value:Function):void
     {
         if (value == _emptyIndicatorFactory) return;
@@ -237,13 +321,27 @@ public class PullToRefreshBase extends List
     //  errorIndicatorFactory
     //-------------------------------------
 
+    /** @private */
     private var _errorIndicatorFactory:Function = defaultErrorIndicatorFactory;
 
+    /**
+     * A function that used to create ErrorIndicator instance.
+     *
+     * <listing version="3.0">
+     * pullToRefresh.errorIndicatorFactory = function():DisplayObject
+     * {
+     *     return new DefaultErrorIndicator();
+     * }
+     * </listing>
+     *
+     * @see ErrorIndicator
+     */
     public function get errorIndicatorFactory():Function
     {
         return _errorIndicatorFactory;
     }
 
+    /** @private */
     public function set errorIndicatorFactory(value:Function):void
     {
         if (value == _errorIndicatorFactory) return;
@@ -255,29 +353,29 @@ public class PullToRefreshBase extends List
     //  errorString
     //-------------------------------------
 
+    /** @private */
     private var _errorString:String;
 
+    /** An error message that is displayed when something wrong. */
     public function get errorString():String
     {
         return _errorString;
-    }
-
-    public function set errorString(value:String):void
-    {
-        _errorString = value;
     }
 
     //-------------------------------------
     //  emptyString
     //-------------------------------------
 
+    /** @private */
     private var _emptyString:String;
 
+    /** The message that will be displayed if there are no data on the Server. */
     public function get emptyString():String
     {
         return _emptyString;
     }
 
+    /** @private */
     public function set emptyString(value:String):void
     {
         _emptyString = value;
@@ -399,11 +497,11 @@ public class PullToRefreshBase extends List
 
                 if (header.state == HeaderState.LOADING)
                 {
-                    headerAsDisplayObject.height = Math.max(Math.abs(_verticalScrollPosition), header.refreshHeight);
+                    headerAsDisplayObject.height = Math.max(Math.abs(_verticalScrollPosition), header.headerHeight);
 
-                    if (Math.abs(_verticalScrollPosition) < header.refreshHeight)
+                    if (Math.abs(_verticalScrollPosition) < header.headerHeight)
                     {
-                        headerAsDisplayObject.y = Math.abs(_verticalScrollPosition) - header.refreshHeight;
+                        headerAsDisplayObject.y = Math.abs(_verticalScrollPosition) - header.headerHeight;
                     }
                     else
                     {
@@ -414,7 +512,7 @@ public class PullToRefreshBase extends List
                 {
                     if (header.state != HeaderState.FREE)
                     {
-                        if (Math.abs(_verticalScrollPosition) > header.refreshHeight)
+                        if (Math.abs(_verticalScrollPosition) > header.headerHeight)
                         {
                             header.state = HeaderState.RELEASE;
                         }
@@ -438,7 +536,7 @@ public class PullToRefreshBase extends List
         {
             var footerAsDisplayObject:DisplayObject = footer as DisplayObject;
 
-            if (_maxVerticalScrollPosition - footer.originalHeight > 0)
+            if (_maxVerticalScrollPosition - footer.footerHeight > 0)
             {
                 if (footer.state != FooterState.DONE || showFooterWhenDone)
                 {
@@ -446,7 +544,7 @@ public class PullToRefreshBase extends List
 
                     if (footer.state != FooterState.LOADING && footer.state != FooterState.DONE)
                     {
-                        if (_verticalScrollPosition > _maxVerticalScrollPosition - footer.originalHeight - 40)
+                        if (_verticalScrollPosition > _maxVerticalScrollPosition - footer.footerHeight - 40)
                         {
                             footer.state = FooterState.RELEASE;
                         }
@@ -509,7 +607,7 @@ public class PullToRefreshBase extends List
             {
                 originalMinScrollPosition = _minVerticalScrollPosition;
 
-                _minVerticalScrollPosition = -header.refreshHeight;
+                _minVerticalScrollPosition = -header.headerHeight;
 
                 if (header.state == HeaderState.RELEASE)
                 {
@@ -531,7 +629,7 @@ public class PullToRefreshBase extends List
             {
                 originalMinScrollPosition = _minVerticalScrollPosition;
 
-                _minVerticalScrollPosition = -header.refreshHeight;
+                _minVerticalScrollPosition = -header.headerHeight;
             }
         }
 
@@ -541,7 +639,7 @@ public class PullToRefreshBase extends List
             {
                 originalMaxScrollPosition = _maxVerticalScrollPosition;
 
-                _maxVerticalScrollPosition = _maxVerticalScrollPosition + footer.originalHeight;
+                _maxVerticalScrollPosition = _maxVerticalScrollPosition + footer.footerHeight;
             }
         }
     }
@@ -556,6 +654,7 @@ public class PullToRefreshBase extends List
     //  Methods: Load initial data
     //--------------------------------------
 
+    /** Starts loading initial data. */
     protected function load():void
     {
         if (!isLoading)
@@ -606,6 +705,7 @@ public class PullToRefreshBase extends List
     //  Methods: Refresh with new data
     //--------------------------------------
 
+    /** Starts loading new items. */
     protected function refresh():void
     {
         if (!isRefreshing)
@@ -668,6 +768,7 @@ public class PullToRefreshBase extends List
     //  Methods: Proceed to next data
     //--------------------------------------
 
+    /** Starts loading previous items. */
     protected function proceed():void
     {
         if (!isProceeding && !isLoading)
@@ -902,17 +1003,6 @@ public class PullToRefreshBase extends List
                 this.addRawChildInternal(currentIndicator);
             }
         }
-    }
-
-    //--------------------------------------------------------------------------
-    //
-    //  Overridden event handlers
-    //
-    //--------------------------------------------------------------------------
-
-    override protected function dataProvider_resetHandler(event:Event):void
-    {
-        super.dataProvider_resetHandler(event);
     }
 }
 }

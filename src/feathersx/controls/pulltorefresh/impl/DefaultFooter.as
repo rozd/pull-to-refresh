@@ -146,13 +146,13 @@ public class DefaultFooter extends FeathersControl implements Footer
 
         if (sizeInvalid)
         {
-            var percent:Number = Math.min(1.0, actualHeight / originalHeight);
+            var percent:Number = Math.min(1.0, actualHeight / footerHeight);
 
             if (spinner != null)
             {
                 spinner.x = actualWidth / 2;
 
-                spinner.y = -spinner.height / 2 + percent * (spinner.height / 2 + originalHeight / 2);
+                spinner.y = -spinner.height / 2 + percent * (spinner.height / 2 + footerHeight / 2);
             }
 
             background.width = actualWidth;
@@ -168,7 +168,7 @@ public class DefaultFooter extends FeathersControl implements Footer
     //
     //--------------------------------------------------------------------------
 
-    public function get originalHeight():Number
+    public function get footerHeight():Number
     {
         return 40;
     }

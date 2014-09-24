@@ -7,13 +7,20 @@
  */
 package feathersx.controls.pulltorefresh
 {
-import flash.geom.Rectangle;
-
 public interface Header
 {
+    /**
+     * Indicates current state.
+     *
+     * @see HeaderState
+     */
     function get state():String;
     function set state(value:String):void;
 
-    function get refreshHeight():Number;
+    /**
+     * The height of Header that should be reached to transition to
+     * HeaderState.RELEASE state.
+     */
+    function get headerHeight():Number;
 }
 }

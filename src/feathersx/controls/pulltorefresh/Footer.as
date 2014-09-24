@@ -9,8 +9,16 @@ package feathersx.controls.pulltorefresh
 {
 public interface Footer
 {
-    function get originalHeight():Number;
+    /**
+     * The preferred height of a concrete Footer component.
+     */
+    function get footerHeight():Number;
 
+    /**
+     * Indicates current state.
+     *
+     * @see FooterState
+     */
     function get state():String;
     function set state(value:String):void;
 }
