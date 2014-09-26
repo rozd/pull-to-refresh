@@ -218,7 +218,7 @@ public class PullToRefreshBase extends List
     {
         if (_headerFactory == value) return;
         _headerFactory = value;
-        this.invalidate(INVALIDATION_FLAG_HEADER);
+        invalidate(INVALIDATION_FLAG_HEADER);
     }
 
     //-------------------------------------
@@ -250,7 +250,7 @@ public class PullToRefreshBase extends List
     {
         if (_footerFactory == value) return;
         _footerFactory = value;
-        this.invalidate(INVALIDATION_FLAG_FOOTER);
+        invalidate(INVALIDATION_FLAG_FOOTER);
     }
 
     //-------------------------------------
@@ -271,6 +271,7 @@ public class PullToRefreshBase extends List
      * </listing>
      *
      * @see LoadingIndicator
+     * @see DefaultLoadingIndicator
      */
     public function get loadingIndicatorFactory():Function
     {
@@ -282,7 +283,7 @@ public class PullToRefreshBase extends List
     {
         if (value == _loadingIndicatorFactory) return;
         _loadingIndicatorFactory = value;
-        this.invalidate(INVALIDATION_FLAG_STYLES);
+        invalidate(INVALIDATION_FLAG_STYLES);
     }
 
     //-------------------------------------
@@ -303,6 +304,7 @@ public class PullToRefreshBase extends List
      * </listing>
      *
      * @see EmptyIndicator
+     * @see DefaultEmptyIndicator
      */
     public function get emptyIndicatorFactory():Function
     {
@@ -314,7 +316,7 @@ public class PullToRefreshBase extends List
     {
         if (value == _emptyIndicatorFactory) return;
         _emptyIndicatorFactory = value;
-        this.invalidate(INVALIDATION_FLAG_STYLES);
+        invalidate(INVALIDATION_FLAG_STYLES);
     }
 
     //-------------------------------------
@@ -325,7 +327,8 @@ public class PullToRefreshBase extends List
     private var _errorIndicatorFactory:Function = defaultErrorIndicatorFactory;
 
     /**
-     * A function that used to create ErrorIndicator instance.
+     * A function that used to create ErrorIndicator instance, that used to show
+     * an error message.
      *
      * <listing version="3.0">
      * pullToRefresh.errorIndicatorFactory = function():DisplayObject
@@ -335,6 +338,7 @@ public class PullToRefreshBase extends List
      * </listing>
      *
      * @see ErrorIndicator
+     * @see DefaultErrorIndicator
      */
     public function get errorIndicatorFactory():Function
     {
@@ -346,7 +350,7 @@ public class PullToRefreshBase extends List
     {
         if (value == _errorIndicatorFactory) return;
         _errorIndicatorFactory = value;
-        this.invalidate(INVALIDATION_FLAG_STYLES);
+        invalidate(INVALIDATION_FLAG_STYLES);
     }
 
     //-------------------------------------
@@ -382,40 +386,240 @@ public class PullToRefreshBase extends List
     }
 
     //-------------------------------------
-    //  initialFunction
+    //  loadFunction
     //-------------------------------------
 
-    public var loadFunction:Function;
+    /** @private */
+    private var _loadFunction:Function;
+
+    /**
+     * A function that used to load initial data. It takes two arguments:
+     *
+     * <ul>
+     *  <li>
+     *   First is result handler function with signature
+     *   <code>function(items:Array, hasMoreRecords:Boolean = false):void;</code>,
+     *   where <code>items:Array</code> are items to be inserted, and
+     *   <code>hasMoreRecords</code> is flag that indicates if there are more
+     *   data on the server to proceed.
+     *   </li>
+     *   <li>
+     *   And second is error handler function with signature
+     *   <code>function(error:Error):void;</code>, this error will be displayed
+     *   using ErrorIndicator, if it defined.
+     *   </li>
+     * </ul>
+     *
+     * <listing version="3.0">
+     * pullToRefresh.loadFunction = function(resultHandler:Function, errorHandler:Function):void
+     * {
+     *     // load initial data and call resultHandler(items:Array, hasNewRecords:Boolean) or errorHandler(error:Error);
+     * }
+     * </listing>
+     *
+     * @see #insertData
+     * @see #errorIndicatorFactory
+     */
+    public function get loadFunction():Function
+    {
+        return _loadFunction;
+    }
+
+    /** @private */
+    public function set loadFunction(value:Function):void
+    {
+        _loadFunction = value;
+    }
 
     //-------------------------------------
     //  refreshFunction
     //-------------------------------------
 
-    public var refreshFunction:Function;
+    /** @private */
+    private var _refreshFunction:Function;
+
+    /**
+     * A function that used to load new data, that become available on the server
+     * after last load or refresh. It takes two arguments:
+     *
+     * <ul>
+     *  <li>
+     *   First is result handler function with signature
+     *   <code>function(items:Array):void;</code>, where <code>items:Array</code>
+     *   are items to be appended into the beginning of the list.
+     *   </li>
+     *   <li>
+     *   And second is error handler function with signature
+     *   <code>function(error:Error):void;</code>, this error will be displayed
+     *   using ErrorIndicator, if it defined.
+     *   </li>
+     * </ul>
+     *
+     * <listing version="3.0">
+     * pullToRefresh.refreshFunction = function(resultHandler:Function, errorHandler:Function):void
+     * {
+     *     // load next items and call resultHandler(items:Array) or errorHandler(error:Error);
+     * }
+     * </listing>
+     *
+     * @see #appendData
+     * @see #errorIndicatorFactory
+     */
+    public function get refreshFunction():Function
+    {
+        return _refreshFunction;
+    }
+
+    /** @private */
+    public function set refreshFunction(value:Function):void
+    {
+        _refreshFunction = value;
+    }
 
     //-------------------------------------
     //  previousFunction
     //-------------------------------------
 
-    public var proceedFunction:Function;
+    /** @private */
+    private var _proceedFunction:Function;
+
+    /**
+     * A function that used to load earlier data, that are on server. It takes
+     * two arguments:
+     *
+     * <ul>
+     *  <li>
+     *   First is result handler function with signature
+     *   <code>function(items:Array, hasMoreRecords:Boolean = false):void;</code>,
+     *   where <code>items:Array</code> are items to be prepended into ending of
+     *   list, and <code>hasMoreRecords</code> is flag that indicates if there
+     *   are more data on the server to proceed.
+     *   </li>
+     *   <li>
+     *   And second is error handler function with signature
+     *   <code>function(error:Error):void;</code>, this error will be displayed
+     *   using ErrorIndicator, if it defined.
+     *   </li>
+     * </ul>
+     *
+     * <listing version="3.0">
+     * pullToRefresh.proceedFunction = function(resultHandler:Function, errorHandler:Function):void
+     * {
+     *     // load previous data and call resultHandler(items:Array, hasNewRecords:Boolean) or errorHandler(error:Error);
+     * }
+     * </listing>
+     *
+     * @see #insertData
+     * @see #errorIndicatorFactory
+     */
+
+    public function get proceedFunction():Function
+    {
+        return _proceedFunction;
+    }
+
+    /** @private */
+    public function set proceedFunction(value:Function):void
+    {
+        _proceedFunction = value;
+    }
 
     //-------------------------------------
     //  insertDataFunction
     //-------------------------------------
 
-    public var insertDataFunction:Function;
+    /** @private */
+    private var _insertDataFunction:Function;
+
+    /**
+     * A function that allows to override inserting initial items default functionality.
+     *
+     * <listing version="3.0">
+     * pullToRefresh.prependDataFunction = function(items:Array):void
+     * {
+     *     // handle received items before they will be added to the collection
+     *     items.forEach(doSomethingWithArrayItem);
+     *
+     *     // replace items in collection
+     *     pullToRefresh.dataProvider.data = items;
+     * }
+     * </listing>
+     */
+    public function get insertDataFunction():Function
+    {
+        return _insertDataFunction;
+    }
+
+    /** @private */
+    public function set insertDataFunction(value:Function):void
+    {
+        _insertDataFunction = value;
+    }
 
     //-------------------------------------
     //  appendDataFunction
     //-------------------------------------
 
-    public var appendDataFunction:Function;
+    /** @private */
+    private var _appendDataFunction:Function;
+
+    /**
+     * A function that allows to override appending new items default functionality.
+     *
+     * <listing version="3.0">
+     * pullToRefresh.prependDataFunction = function(items:Array):void
+     * {
+     *     // handle received items before they will be added to the collection
+     *     items.forEach(doSomethingWithArrayItem);
+     *
+     *     // add items at the beginning of collection
+     *     pullToRefresh.dataProvider.addAllAt(new ListCollection(items), 0);
+     * }
+     * </listing>
+     */
+    public function get appendDataFunction():Function
+    {
+        return _appendDataFunction;
+    }
+
+    /** @private */
+    public function set appendDataFunction(value:Function):void
+    {
+        _appendDataFunction = value;
+    }
 
     //-------------------------------------
     //  prependDataFunction
     //-------------------------------------
 
-    public var prependDataFunction:Function;
+    /** @private */
+    private var _prependDataFunction:Function;
+
+    /**
+     * A function that allows to override prepending previous items default
+     * functionality.
+     *
+     * <listing version="3.0">
+     * pullToRefresh.prependDataFunction = function(items:Array):void
+     * {
+     *     // handle received items before they will be added to the collection
+     *     items.forEach(doSomethingWithArrayItem);
+     *
+     *     // add items at the end of collection
+     *     pullToRefresh.dataProvider.addAll(new ListCollection(items));
+     * }
+     * </listing>
+     */
+    public function get prependDataFunction():Function
+    {
+        return _prependDataFunction;
+    }
+
+    /** @private */
+    public function set prependDataFunction(value:Function):void
+    {
+        _prependDataFunction = value;
+    }
 
     //--------------------------------------------------------------------------
     //
@@ -447,8 +651,8 @@ public class PullToRefreshBase extends List
         {
             if (currentIndicator)
             {
-                currentIndicator.width = this.actualWidth;
-                currentIndicator.height = this.actualHeight;
+                currentIndicator.width = actualWidth;
+                currentIndicator.height = actualHeight;
             }
         }
 
@@ -456,7 +660,7 @@ public class PullToRefreshBase extends List
         {
             if (header)
             {
-                this.removeRawChildInternal(DisplayObject(header), true);
+                removeRawChildInternal(DisplayObject(header), true);
             }
 
             if (_headerFactory != null)
@@ -470,7 +674,7 @@ public class PullToRefreshBase extends List
         {
             if (footer)
             {
-                this.removeRawChildInternal(DisplayObject(footer), true);
+                removeRawChildInternal(DisplayObject(footer), true);
             }
 
             if (_footerFactory != null)
@@ -556,6 +760,10 @@ public class PullToRefreshBase extends List
 
                     footerAsDisplayObject.y = _viewPort.height - _verticalScrollPosition + _topViewPortOffset + _bottomViewPortOffset;
                     footerAsDisplayObject.height = Math.max(actualHeight - footerAsDisplayObject.y, 0);
+                }
+                else
+                {
+                    hideFooter();
                 }
             }
             else
@@ -659,13 +867,13 @@ public class PullToRefreshBase extends List
     {
         if (!isLoading)
         {
-            if (loadFunction != null)
+            if (_loadFunction != null)
             {
                 isLoading = true;
 
                 setCurrentState(STATE_LOADING);
 
-                loadFunction(insertData, handleError);
+                _loadFunction(insertData, handleError);
             }
         }
     }
@@ -675,9 +883,9 @@ public class PullToRefreshBase extends List
         if (_dataProvider == null)
             _dataProvider = new ListCollection();
 
-        if (insertDataFunction != null)
+        if (_insertDataFunction != null)
         {
-            insertDataFunction(data);
+            _insertDataFunction(data);
         }
         else
         {
@@ -716,11 +924,11 @@ public class PullToRefreshBase extends List
             }
             else
             {
-                if (refreshFunction != null)
+                if (_refreshFunction != null)
                 {
                     header.state = HeaderState.LOADING;
 
-                    refreshFunction(appendData, refreshError);
+                    _refreshFunction(appendData, refreshError);
 
                     previousMaxScrollPosition = _maxVerticalScrollPosition;
                 }
@@ -734,9 +942,9 @@ public class PullToRefreshBase extends List
 
     protected function appendData(data:Array):void
     {
-        if (appendDataFunction != null)
+        if (_appendDataFunction != null)
         {
-            appendDataFunction(data);
+            _appendDataFunction(data);
         }
         else
         {
@@ -773,13 +981,13 @@ public class PullToRefreshBase extends List
     {
         if (!isProceeding && !isLoading)
         {
-            if (proceedFunction != null)
+            if (_proceedFunction != null)
             {
                 isProceeding = true;
 
                 footer.state = FooterState.LOADING;
 
-                proceedFunction(prependData, proceedError);
+                _proceedFunction(prependData, proceedError);
             }
             else
             {
@@ -790,9 +998,9 @@ public class PullToRefreshBase extends List
 
     protected function prependData(data:Array, hasMoreRecords:Boolean = false):void
     {
-        if (prependDataFunction != null)
+        if (_prependDataFunction != null)
         {
-            prependDataFunction(data);
+            _prependDataFunction(data);
         }
         else
         {
@@ -892,7 +1100,7 @@ public class PullToRefreshBase extends List
                 targetScrollPosition = _maxVerticalScrollPosition;
             }
 
-            this.verticalScrollPosition = targetScrollPosition;
+            verticalScrollPosition = targetScrollPosition;
 
             previousMaxScrollPosition = previousScrollPosition = NaN;
         }
@@ -993,14 +1201,14 @@ public class PullToRefreshBase extends List
         {
             if (currentIndicator)
             {
-                this.removeRawChildInternal(this.currentIndicator);
+                removeRawChildInternal(currentIndicator);
             }
 
             currentIndicator = newCurrentIndicator;
 
             if (currentIndicator)
             {
-                this.addRawChildInternal(currentIndicator);
+                addRawChildInternal(currentIndicator);
             }
         }
     }
