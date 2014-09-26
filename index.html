@@ -13,6 +13,32 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+    <script type="text/javascript" src="javascripts/swfobject.js"></script>
+    <script type="text/javascript">
+        // For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. 
+        var swfVersionStr = "15.0.0";
+        // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
+        var xiSwfUrlStr = "playerProductInstall.swf";
+        var flashvars = {};
+        var params = {};
+        params.quality = "high";
+        params.bgcolor = "#4a4137";
+        params.allowscriptaccess = "sameDomain";
+        params.allowfullscreen = "true";
+        params.wmode = "direct";
+        var attributes = {};
+        attributes.id = "HelloWorld";
+        attributes.name = "HelloWorld";
+        attributes.align = "middle";
+        swfobject.embedSWF(
+            "examples/HelloWorld/bin/HelloWorld.swf", "flashContent", 
+            "320", "480", 
+            swfVersionStr, xiSwfUrlStr, 
+            flashvars, params, attributes);
+        // JavaScript enabled so display the flashContent div in case it is not replaced with a swf object.
+        swfobject.createCSS("#flashContent", "display:block;text-align:left;");
+    </script>
+
     <title>Pull-To-Refresh by rozd</title>
   </head>
 
@@ -42,8 +68,21 @@
 <li>Visual indicators for <em>loading</em>, <em>error</em> and <em>empty</em> states</li>
 <li>Responsibility of loading items could be delegated to Data Provider</li>
 <li>Have no restriction for Header's and Footer's animation</li>
-</ul><h2>
-<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+</ul>
+<h2><a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Example</h2>
+<div id="flashContent">
+    <p>
+        To view this page ensure that Adobe Flash Player version 
+        15.0.0 or greater is installed. 
+    </p>
+    <script type="text/javascript"> 
+        var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://"); 
+        document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='" 
+                        + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
+    </script> 
+</div>
+
+<h2><a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <p>PullToRefresh extends standard Feathers' List, it can be created as usual list:</p>
 
