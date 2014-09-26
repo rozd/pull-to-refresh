@@ -5,7 +5,7 @@ pull-to-refresh
 
 ## Features
 * Pull to Refresh for latest items
-* Inifinity Scroll for earlier items
+* Infinity Scroll for earlier items
 * Visual indicators for _loading_, _error_ and _empty_ states
 * Responsibility of loading items could be delegated to Data Provider
 * Have no restriction for Header's and Footer's animation
@@ -54,19 +54,19 @@ this.pullToRefresh.refreshFunction = function(resultHandler:Function, errorHandl
 
 ```
 
-In this example we uses [as3-promises] to simulate server response. Also take a look on `hasMoreRecords` param, this is flag that indicates if there are more earlier data to load, and note that it is used only for `load` and `proceed` fucntion, but not for `refresh`.
+In this example we uses [as3-promises] to simulate server response. Also take a look on `hasMoreRecords` param, this is flag that indicates if there are more earlier data to load, and note that it is used only for `load` and `proceed` function, but not for `refresh`.
 
 ### Customizing Appearance
 
 
 The next visual components could be specified: 
-* _Header_ that **should** implements [Header](src/feathersx/controls/pulltorefresh/Header.as) iterface,
+* _Header_ that **should** implements [Header](src/feathersx/controls/pulltorefresh/Header.as) interface,
 * _Footer_ that **should** implements [Footer](src/feathersx/controls/pulltorefresh/Footer.as)  interface,
 * _ErrorIndicator_ (indicates error state) that **could** implements [ErrorIndicator](src/feathersx/controls/pulltorefresh/ErrorIndicator.as) interface,
 * _EmptyIndicator_ (indicates empty state) that **could** implements [EmptyIndicator](src/feathersx/controls/pulltorefresh/EmptyIndicator.as) interface and
 * _LoadingIndicator_ (indicates loading state) that have not special interface.
 
-**Note**: The reason to implement corresponed interfaces for error and empty indicators is they can receive error and empty strings. Each indicator is placed at the center of the PullToRefresh list.
+**Note**: The reason to implement correspond interfaces for error and empty indicators is they can receive error and empty strings. Each indicator is placed at the center of the PullToRefresh list.
 
 Each of these components have default implementation, that could be overridden through factory method: 
 ```as3
@@ -116,7 +116,7 @@ this.pullToRefresh.prependDataFunction = function(items:Array):void
 ```
 
 ## Using Provider
-The responsibility of work with server could be delegated to data provider. Just pass data provider that implemts [Provider](src/feathersx/controls/pulltorefresh/ErrorIndicator.as):
+The responsibility of work with server could be delegated to data provider. Just pass data provider that implements [Provider](src/feathersx/controls/pulltorefresh/ErrorIndicator.as):
 
 ```as3
 public class TodoProvider extends ListCollection implements Provider
