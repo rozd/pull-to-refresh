@@ -1,7 +1,7 @@
 package
 {
-import feathers.examples.todos.M;
 import feathers.examples.todos.Main;
+import feathers.examples.todos.Content;
 
 import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -51,7 +51,7 @@ import flash.display.MovieClip;
 			Starling.handleLostContext = true;
 			Starling.multitouchEnabled = true;
 //			var MainType:Class = getDefinitionByName("feathers.examples.todos.Main") as Class;
-			this._starling = new Starling(M, this.stage);
+			this._starling = new Starling(Main, this.stage);
 			this._starling.enableErrorChecking = false;
 			this._starling.start();
 		}

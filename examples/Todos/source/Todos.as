@@ -1,7 +1,7 @@
 package
 {
-import feathers.examples.todos.M;
 import feathers.examples.todos.Main;
+import feathers.examples.todos.Content;
 
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -99,7 +99,7 @@ import feathers.examples.todos.Main;
 		{
 			Starling.handleLostContext = true;
 			Starling.multitouchEnabled = true;
-			this._starling = new Starling(M, this.stage);
+			this._starling = new Starling(Main, this.stage);
 			this._starling.enableErrorChecking = false;
 //            this._starling.showStats = true;
 			//this._starling.showStatsAt(HAlign.LEFT, VAlign.BOTTOM);

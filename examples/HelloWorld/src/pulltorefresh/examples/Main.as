@@ -18,6 +18,8 @@ public class Main extends PanelScreen
     public function Main()
     {
         super();
+
+        headerProperties.title = "Example";
     }
 
     private var pullToRefresh:PullToRefresh;

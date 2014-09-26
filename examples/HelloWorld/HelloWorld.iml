@@ -2,7 +2,7 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="HelloWorld">
     <configurations>
-      <configuration name="HelloWorld" pure-as="true" main-class="HelloWorld" output-file="HelloWorld.swf" output-folder="$MODULE_DIR$/../../../mobitile/client/mobitile/out/production/HelloWorld" wrapper-template-path="$MODULE_DIR$/html-template">
+      <configuration name="HelloWorld" pure-as="true" main-class="HelloWorld" output-file="HelloWorld.swf" output-folder="$MODULE_DIR$/bin" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
         <dependencies target-player="15.0">
           <entries>
             <entry module-name="feathers" build-configuration-name="feathers">
