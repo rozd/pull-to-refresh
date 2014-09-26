@@ -60,13 +60,13 @@ In this example we uses [as3-promises] to simulate server response. Also take a 
 
 
 The next visual components could be specified: 
-* _Header_ that **should** implements Header iterface,
-* _Footer_ that **should** implements Footer interface,
-* _ErrorIndicator_ (indicates error state) that **could** implements ErrorIndicator interface,
-* _EmptyIndicator_ (indicates empty state) that **could** implements EmptyIndicator interface and
+* _Header_ that **should** implements [Header](src/feathersx/controls/pulltorefresh/Header.as) iterface,
+* _Footer_ that **should** implements [Footer](src/feathersx/controls/pulltorefresh/Footer.as)  interface,
+* _ErrorIndicator_ (indicates error state) that **could** implements [ErrorIndicator](src/feathersx/controls/pulltorefresh/ErrorIndicator.as) interface,
+* _EmptyIndicator_ (indicates empty state) that **could** implements [EmptyIndicator](src/feathersx/controls/pulltorefresh/EmptyIndicator.as) interface and
 * _LoadingIndicator_ (indicates loading state) that have not special interface.
 
-The reason to implement corresponed interfaces for error and empty indicators is they can receive error and empty strings. Each indicator is placed at the center of list.
+**Note**: The reason to implement corresponed interfaces for error and empty indicators is they can receive error and empty strings. Each indicator is placed at the center of the PullToRefresh list.
 
 Each of these components have default implementation, that could be overridden through factory method: 
 ```as3
@@ -97,7 +97,7 @@ this.pullToRefresh.loadingIndicatorFactory = function():DisplayObject
 ```
 
 ### Customizing Data Insert
-The default implementations of inserting, appending and prepending items could be overrieden
+The default implementations of insert, append and prepend items could be overridden:
 ```as3
 this.pullToRefresh.insertDataFunction = function(items:Array):void
 {
@@ -116,18 +116,50 @@ this.pullToRefresh.prependDataFunction = function(items:Array):void
 ```
 
 ## Using Provider
-
-
-
-Then add three methods for loading items:
-
-
-
-Just define three methods for loading items
-
-For loading initial state
+The responsibility of work with server could be delegated to data provider. Just pass data provider that implemts [Provider](src/feathersx/controls/pulltorefresh/ErrorIndicator.as):
 
 ```as3
-pullToRefresh
-```
+public class TodoProvider extends ListCollection implements Provider
+{
+  public function TodoProvider()
+  {
+   super();
+  }
 
+  public function get insertDataFunction():Function {return null;}
+  
+  public function get appendDataFunction():Function {return null;}
+  
+  public function get prependDataFunction():Function {return null;}
+  
+  public function load(result:Function, error:Function):void
+  {
+    var result:Function = function(value:Object):*
+    {
+      resultHandler(value.data, value.hasMoreRecords);
+    }
+    
+    Promise.delay({data : [{label : "M"}, {label : "N"}, {label : "O"}], hasMoreRecords : true}, 1000).then(result).otherwise(errorHandler);
+  }
+  
+  public function refresh(result:Function, error:Function):void
+  {
+    var result:Function = function(value:Object):*
+    {
+      resultHandler(value.data);
+    }
+    
+    Promise.delay({data : [{label : "A"}, {label : "B"}, {label : "C"}]}, 1000).then(result).otherwise(errorHandler);
+  }
+  
+  public function proceed(result:Function, error:Function):void
+  {
+    var result:Function = function(value:Object):*
+    {
+      resultHandler(value.data, value.hasMoreRecords);
+    }
+    
+    Promise.delay({data : [{label : "X"}, {label : "Y"}, {label : "Z"}], hasMoreRecords : true}, 1000).then(result).otherwise(errorHandler);
+  }
+}
+```
