@@ -4,7 +4,7 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
@@ -21,44 +21,191 @@
       <div class="inner">
         <h1>Pull-To-Refresh</h1>
         <h2>&quot;Pull to Refresh&quot; and &quot;Infinity List&quot; implementation for Feathers</h2>
-        <a href="https://github.com/rozd/pull-to-refresh" class="button"><small>View project on</small>GitHub</a>
+        <a href="https://github.com/rozd/pull-to-refresh" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
 
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+          <h1>
+<a name="pull-to-refresh" class="anchor" href="#pull-to-refresh"><span class="octicon octicon-link"></span></a>pull-to-refresh</h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>"Pull to Refresh" and "Infinity List" implementation for Feathers</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<ul>
+<li>Pull to Refresh for latest items</li>
+<li>Infinity Scroll for earlier items</li>
+<li>Visual indicators for <em>loading</em>, <em>error</em> and <em>empty</em> states</li>
+<li>Responsibility of loading items could be delegated to Data Provider</li>
+<li>Have no restriction for Header's and Footer's animation</li>
+</ul><h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>PullToRefresh extends standard Feathers' List, it can be created as usual list:</p>
+
+<div class="highlight highlight-as3"><pre><span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">PullToRefresh</span><span class="o">();</span>
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">loadImmediately</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="c1">// indicates that loading of initial items will be started on list created</span>
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">dataProvider</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">ListCollection</span><span class="o">();</span>
+<span class="k">this</span><span class="o">.</span><span class="na">addChild</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">);</span>
+</pre></div>
+
+<p>Then define three methods for loading <strong>initial</strong>, <strong>earlier</strong> and <strong>latest</strong> items:</p>
+
+<div class="highlight highlight-as3"><pre>
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">loadFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">resultHandler</span><span class="o">:</span><span class="n">Function</span><span class="o">,</span> <span class="n">errorHandler</span><span class="o">:</span><span class="n">Function</span><span class="o">):</span><span class="kc">void</span>
+<span class="o">{</span>
+  <span class="kd">var</span> <span class="n">result</span><span class="p">:</span><span class="kt">Function</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">value</span><span class="o">:</span><span class="n">Object</span><span class="o">):*</span>
+  <span class="o">{</span>
+    <span class="n">resultHandler</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">data</span><span class="o">,</span> <span class="n">value</span><span class="o">.</span><span class="na">hasMoreRecords</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="n">Promise</span><span class="o">.</span><span class="na">delay</span><span class="o">({</span><span class="n">data</span> <span class="o">:</span> <span class="o">[{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"M"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"N"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"O"</span><span class="o">}],</span> <span class="n">hasMoreRecords</span> <span class="o">:</span> <span class="kc">true</span><span class="o">},</span> <span class="mi">1000</span><span class="o">).</span><span class="n">then</span><span class="o">(</span><span class="n">result</span><span class="o">).</span><span class="n">otherwise</span><span class="o">(</span><span class="n">errorHandler</span><span class="o">);</span>
+<span class="o">};</span>
+
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">proceedFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">resultHandler</span><span class="o">:</span><span class="n">Function</span><span class="o">,</span> <span class="n">errorHandler</span><span class="o">:</span><span class="n">Function</span><span class="o">):</span><span class="kc">void</span>
+<span class="o">{</span>
+  <span class="kd">var</span> <span class="n">result</span><span class="p">:</span><span class="kt">Function</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">value</span><span class="o">:</span><span class="n">Object</span><span class="o">):*</span>
+  <span class="o">{</span>
+    <span class="n">resultHandler</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">data</span><span class="o">,</span> <span class="n">value</span><span class="o">.</span><span class="na">hasMoreRecords</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="n">Promise</span><span class="o">.</span><span class="na">delay</span><span class="o">({</span><span class="n">data</span> <span class="o">:</span> <span class="o">[{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"X"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"Y"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"Z"</span><span class="o">}],</span> <span class="n">hasMoreRecords</span> <span class="o">:</span> <span class="kc">true</span><span class="o">},</span> <span class="mi">1000</span><span class="o">).</span><span class="n">then</span><span class="o">(</span><span class="n">result</span><span class="o">).</span><span class="n">otherwise</span><span class="o">(</span><span class="n">errorHandler</span><span class="o">);</span>
+<span class="o">};</span>
+
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">refreshFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">resultHandler</span><span class="o">:</span><span class="n">Function</span><span class="o">,</span> <span class="n">errorHandler</span><span class="o">:</span><span class="n">Function</span><span class="o">):</span><span class="kc">void</span>
+<span class="o">{</span>
+  <span class="kd">var</span> <span class="n">result</span><span class="p">:</span><span class="kt">Function</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">value</span><span class="o">:</span><span class="n">Object</span><span class="o">):*</span>
+  <span class="o">{</span>
+    <span class="n">resultHandler</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">data</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="n">Promise</span><span class="o">.</span><span class="na">delay</span><span class="o">({</span><span class="n">data</span> <span class="o">:</span> <span class="o">[{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"A"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"B"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"C"</span><span class="o">}]},</span> <span class="mi">1000</span><span class="o">).</span><span class="n">then</span><span class="o">(</span><span class="n">result</span><span class="o">).</span><span class="n">otherwise</span><span class="o">(</span><span class="n">errorHandler</span><span class="o">);</span>
+<span class="o">};</span>
+
+</pre></div>
+
+<p>In this example we uses [as3-promises] to simulate server response. Also take a look on <code>hasMoreRecords</code> param, this is flag that indicates if there are more earlier data to load, and note that it is used only for <code>load</code> and <code>proceed</code> function, but not for <code>refresh</code>.</p>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="customizing-appearance" class="anchor" href="#customizing-appearance"><span class="octicon octicon-link"></span></a>Customizing Appearance</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>The next visual components could be specified: </p>
+
+<ul>
+<li>
+<em>Header</em> that <strong>should</strong> implements <a href="src/feathersx/controls/pulltorefresh/Header.as">Header</a> interface,</li>
+<li>
+<em>Footer</em> that <strong>should</strong> implements <a href="src/feathersx/controls/pulltorefresh/Footer.as">Footer</a>  interface,</li>
+<li>
+<em>ErrorIndicator</em> (indicates error state) that <strong>could</strong> implements <a href="src/feathersx/controls/pulltorefresh/ErrorIndicator.as">ErrorIndicator</a> interface,</li>
+<li>
+<em>EmptyIndicator</em> (indicates empty state) that <strong>could</strong> implements <a href="src/feathersx/controls/pulltorefresh/EmptyIndicator.as">EmptyIndicator</a> interface and</li>
+<li>
+<em>LoadingIndicator</em> (indicates loading state) that have not special interface.</li>
+</ul><p><strong>Note</strong>: The reason to implement correspond interfaces for error and empty indicators is they can receive error and empty strings. Each indicator is placed at the center of the PullToRefresh list.</p>
+
+<p>Each of these components have default implementation, that could be overridden through factory method: </p>
+
+<div class="highlight highlight-as3"><pre><span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">headerFactory</span> <span class="o">=</span> <span class="kd">function</span><span class="o">():</span><span class="n">DisplayObject</span>
+<span class="o">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="kt">CustomHeader</span><span class="o">();</span>
+<span class="o">};</span>
+
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">footerFactory</span> <span class="o">=</span> <span class="kd">function</span><span class="o">():</span><span class="n">DisplayObject</span>
+<span class="o">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="kt">CustomFooter</span><span class="o">();</span>
+<span class="o">};</span>
+
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">emptyIndicatorFactory</span> <span class="o">=</span> <span class="kd">function</span><span class="o">():</span><span class="n">DisplayObject</span>
+<span class="o">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="kt">DisplayObject</span><span class="o">();</span>
+<span class="o">};</span>
+
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">errorIndicatorFactory</span> <span class="o">=</span> <span class="kd">function</span><span class="o">():</span><span class="n">DisplayObject</span>
+<span class="o">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="kt">DisplayObject</span><span class="o">();</span>
+<span class="o">};</span>
+
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">loadingIndicatorFactory</span> <span class="o">=</span> <span class="kd">function</span><span class="o">():</span><span class="n">DisplayObject</span>
+<span class="o">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="kt">DisplayObject</span><span class="o">();</span>
+<span class="o">};</span>
+</pre></div>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="customizing-data-insert" class="anchor" href="#customizing-data-insert"><span class="octicon octicon-link"></span></a>Customizing Data Insert</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>The default implementations of insert, append and prepend items could be overridden:</p>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<div class="highlight highlight-as3"><pre><span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">insertDataFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">items</span><span class="o">:</span><span class="n">Array</span><span class="o">):</span><span class="kc">void</span>
+<span class="o">{</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">data</span> <span class="o">=</span> <span class="n">items</span><span class="o">;</span>
+<span class="o">};</span>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">appendDataFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">items</span><span class="o">:</span><span class="n">Array</span><span class="o">):</span><span class="kc">void</span>
+<span class="o">{</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">addAllAt</span><span class="o">(</span><span class="k">new</span> <span class="kt">ListCollection</span><span class="o">(</span><span class="n">items</span><span class="o">),</span> <span class="mi">0</span><span class="o">);</span>
+<span class="o">};</span>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">prependDataFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">items</span><span class="o">:</span><span class="n">Array</span><span class="o">):</span><span class="kc">void</span>
+<span class="o">{</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">pullToRefresh</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="k">new</span> <span class="kt">ListCollection</span><span class="o">(</span><span class="n">items</span><span class="o">));</span>
+<span class="o">};</span>
+</pre></div>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<h2>
+<a name="using-provider" class="anchor" href="#using-provider"><span class="octicon octicon-link"></span></a>Using Provider</h2>
+
+<p>The responsibility of work with server could be delegated to data provider. Just pass data provider that implements <a href="src/feathersx/controls/pulltorefresh/ErrorIndicator.as">Provider</a>:</p>
+
+<div class="highlight highlight-as3"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="n">TodoProvider</span> <span class="kd">extends</span> <span class="n">ListCollection</span> <span class="kd">implements</span> <span class="n">Provider</span>
+<span class="o">{</span>
+  <span class="kd">public</span> <span class="kd">function </span><span class="nf">TodoProvider</span><span class="o">()</span>
+  <span class="o">{</span>
+   <span class="kd">super</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">function</span> <span class="kd">get</span> <span class="n">insertDataFunction</span><span class="o">():</span><span class="n">Function</span> <span class="o">{</span><span class="k">return</span> <span class="kc">null</span><span class="o">;}</span>
+
+  <span class="kd">public</span> <span class="kd">function</span> <span class="kd">get</span> <span class="n">appendDataFunction</span><span class="o">():</span><span class="n">Function</span> <span class="o">{</span><span class="k">return</span> <span class="kc">null</span><span class="o">;}</span>
+
+  <span class="kd">public</span> <span class="kd">function</span> <span class="kd">get</span> <span class="n">prependDataFunction</span><span class="o">():</span><span class="n">Function</span> <span class="o">{</span><span class="k">return</span> <span class="kc">null</span><span class="o">;}</span>
+
+  <span class="kd">public</span> <span class="kd">function </span><span class="nf">load</span><span class="o">(</span><span class="n">result</span><span class="o">:</span><span class="kt">Function</span><span class="o">,</span> <span class="n">error</span><span class="o">:</span><span class="kt">Function</span><span class="o">):</span><span class="kt">void</span>
+  <span class="o">{</span>
+    <span class="kd">var</span> <span class="n">result</span><span class="p">:</span><span class="kt">Function</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">value</span><span class="o">:</span><span class="n">Object</span><span class="o">):*</span>
+    <span class="o">{</span>
+      <span class="n">resultHandler</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">data</span><span class="o">,</span> <span class="n">value</span><span class="o">.</span><span class="na">hasMoreRecords</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="n">Promise</span><span class="o">.</span><span class="na">delay</span><span class="o">({</span><span class="n">data</span> <span class="o">:</span> <span class="o">[{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"M"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"N"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"O"</span><span class="o">}],</span> <span class="n">hasMoreRecords</span> <span class="o">:</span> <span class="kc">true</span><span class="o">},</span> <span class="mi">1000</span><span class="o">).</span><span class="n">then</span><span class="o">(</span><span class="n">result</span><span class="o">).</span><span class="n">otherwise</span><span class="o">(</span><span class="n">errorHandler</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">function </span><span class="nf">refresh</span><span class="o">(</span><span class="n">result</span><span class="o">:</span><span class="kt">Function</span><span class="o">,</span> <span class="n">error</span><span class="o">:</span><span class="kt">Function</span><span class="o">):</span><span class="kt">void</span>
+  <span class="o">{</span>
+    <span class="kd">var</span> <span class="n">result</span><span class="p">:</span><span class="kt">Function</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">value</span><span class="o">:</span><span class="n">Object</span><span class="o">):*</span>
+    <span class="o">{</span>
+      <span class="n">resultHandler</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">data</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="n">Promise</span><span class="o">.</span><span class="na">delay</span><span class="o">({</span><span class="n">data</span> <span class="o">:</span> <span class="o">[{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"A"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"B"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"C"</span><span class="o">}]},</span> <span class="mi">1000</span><span class="o">).</span><span class="n">then</span><span class="o">(</span><span class="n">result</span><span class="o">).</span><span class="n">otherwise</span><span class="o">(</span><span class="n">errorHandler</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">function </span><span class="nf">proceed</span><span class="o">(</span><span class="n">result</span><span class="o">:</span><span class="kt">Function</span><span class="o">,</span> <span class="n">error</span><span class="o">:</span><span class="kt">Function</span><span class="o">):</span><span class="kt">void</span>
+  <span class="o">{</span>
+    <span class="kd">var</span> <span class="n">result</span><span class="p">:</span><span class="kt">Function</span> <span class="o">=</span> <span class="kd">function</span><span class="o">(</span><span class="n">value</span><span class="o">:</span><span class="n">Object</span><span class="o">):*</span>
+    <span class="o">{</span>
+      <span class="n">resultHandler</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">data</span><span class="o">,</span> <span class="n">value</span><span class="o">.</span><span class="na">hasMoreRecords</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="n">Promise</span><span class="o">.</span><span class="na">delay</span><span class="o">({</span><span class="n">data</span> <span class="o">:</span> <span class="o">[{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"X"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"Y"</span><span class="o">},</span> <span class="o">{</span><span class="n">label</span> <span class="o">:</span> <span class="s2">"Z"</span><span class="o">}],</span> <span class="n">hasMoreRecords</span> <span class="o">:</span> <span class="kc">true</span><span class="o">},</span> <span class="mi">1000</span><span class="o">).</span><span class="n">then</span><span class="o">(</span><span class="n">result</span><span class="o">).</span><span class="n">otherwise</span><span class="o">(</span><span class="n">errorHandler</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
         </section>
 
         <aside id="sidebar">
