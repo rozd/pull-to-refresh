@@ -27,7 +27,7 @@
           <AirSigningOptions keystore-path="$USER_HOME$/ios/certificate/ios_air_development.p12" provisioning-profile-path="$USER_HOME$/ios/provisioning/Generic_Profile.mobileprovision" />
         </packaging-ios>
       </configuration>
-      <configuration name="Todos (web)" pure-as="true" main-class="TodosWeb" output-file="TodosWeb.swf" output-folder="$MODULE_DIR$/bin" wrapper-template-path="$MODULE_DIR$/html-template">
+      <configuration name="Todos (web)" pure-as="true" main-class="TodosWeb" output-file="TodosWeb.swf" output-folder="$MODULE_DIR$/bin" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
         <dependencies target-player="15.0">
           <entries>
             <entry module-name="pull-to-refresh" build-configuration-name="pull-to-refresh">
