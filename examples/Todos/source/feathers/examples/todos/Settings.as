@@ -34,6 +34,7 @@ public class Settings extends ScrollContainer
     private var hasNewRecordsCheck:Check;
     private var hasOldRecordsCheck:Check;
     private var showFooterWhenDoneCheck:Check;
+    private var simulateErrorCheck:Check;
     
     override protected function initialize():void
     {
@@ -47,9 +48,9 @@ public class Settings extends ScrollContainer
 
         itemsInResponseStepper = new NumericStepper();
         itemsInResponseStepper.minimum = 0;
-        itemsInResponseStepper.value = provider.numItemsInResponse;
-        itemsInResponseStepper.step = 10;
+        itemsInResponseStepper.step = 5;
         itemsInResponseStepper.maximum = 1000;
+        itemsInResponseStepper.value = provider.numItemsInResponse;
         itemsInResponseStepper.addEventListener(Event.CHANGE, itemsInResponseStepper_changeHandler);
 
         hasNewRecordsCheck = new Check();
@@ -64,6 +65,10 @@ public class Settings extends ScrollContainer
         showFooterWhenDoneCheck.isSelected = pullToRefresh.showFooterWhenDone;
         showFooterWhenDoneCheck.addEventListener(Event.CHANGE, showFooterWhenDoneCheck_changeHandler);
 
+        simulateErrorCheck = new Check();
+        simulateErrorCheck.isSelected = provider.simulateError;
+        simulateErrorCheck.addEventListener(Event.CHANGE, simulateErrorCheck_changeHandler);
+
         list = new List();
         list.isSelectable = false;
         list.dataProvider = new ListCollection(
@@ -73,6 +78,7 @@ public class Settings extends ScrollContainer
                 { label: "Has New Records", accessory: hasNewRecordsCheck },
                 { label: "Has Old Records", accessory: hasOldRecordsCheck },
                 { label: "Show Footer if No Old Records", accessory: showFooterWhenDoneCheck },
+                { label: "Simulate Error", accessory: simulateErrorCheck },
             ]);
         list.layoutData = new AnchorLayoutData(0, 0, 0, 0);
         list.clipContent = false;
@@ -104,6 +110,11 @@ public class Settings extends ScrollContainer
     private function showFooterWhenDoneCheck_changeHandler(event:Event):void
     {
         pullToRefresh.showFooterWhenDone = showFooterWhenDoneCheck.isSelected;
+    }
+
+    private function simulateErrorCheck_changeHandler(event:Event):void
+    {
+        provider.simulateError = simulateErrorCheck.isSelected;
     }
 }
 }

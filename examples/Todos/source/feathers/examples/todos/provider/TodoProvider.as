@@ -7,6 +7,7 @@
  */
 package feathers.examples.todos.provider
 {
+import com.codecatalyst.promise.Deferred;
 import com.codecatalyst.promise.Promise;
 
 import feathers.data.ListCollection;
@@ -14,6 +15,10 @@ import feathers.examples.todos.TodoItem;
 
 import feathersx.controls.pulltorefresh.Provider;
 import feathersx.controls.pulltorefresh.event.ProviderEvent;
+
+import flash.utils.clearTimeout;
+
+import flash.utils.setTimeout;
 
 public class TodoProvider extends ListCollection implements Provider
 {
@@ -40,6 +45,8 @@ public class TodoProvider extends ListCollection implements Provider
 
     public var hasNewRecords:Boolean = true;
 
+    public var simulateError:Boolean = false;
+
     private var oldItemIndex:int;
 
     private var newItemIndex:int;
@@ -62,62 +69,101 @@ public class TodoProvider extends ListCollection implements Provider
     //
     //--------------------------------------------------------------------------
 
-    public function load(result:Function, error:Function):void
+    public function load(resultHandler:Function, errorHandler:Function):void
     {
-        var complete:Function = function(data:Array):void
+        if (simulateError)
         {
-            result(data, hasOldRecords);
+            var timeoutId:uint =
+                setTimeout(function():void
+                   {
+                       clearTimeout(timeoutId);
+
+                       errorHandler(new Error("An error occurs during load collection."));
+                   }, 1000);
         }
-
-        var items:Array = [];
-
-        for (var i:uint = 0, n:uint = numItemsInResponse; i < n; i++)
+        else
         {
-            var item:TodoItem = new TodoItem("Item # " + oldItemIndex++);
-
-            items.push(item);
-        }
-
-        Promise.delay(items, 1000).then(complete).otherwise(error);
-    }
-
-    public function refresh(result:Function, error:Function):void
-    {
-        var items:Array = [];
-
-        if (hasNewRecords)
-        {
-            for (var i:uint = 0, n:uint = numItemsInResponse; i < n; i++)
+            var complete:Function = function(data:Array):void
             {
-                var item:TodoItem = new TodoItem("Item # " + --newItemIndex);
-
-                items.unshift(item);
+                resultHandler(data, hasOldRecords);
             }
-        }
 
-        Promise.delay(items, 1000).then(result).otherwise(error);
-    }
+            var items:Array = [];
 
-    public function proceed(result:Function, error:Function):void
-    {
-        var complete:Function = function(data:Array):void
-        {
-            result(data, hasOldRecords);
-        }
-
-        var items:Array = [];
-
-        if (hasOldRecords)
-        {
             for (var i:uint = 0, n:uint = numItemsInResponse; i < n; i++)
             {
                 var item:TodoItem = new TodoItem("Item # " + oldItemIndex++);
 
                 items.push(item);
             }
-        }
 
-        Promise.delay(items, 1000).then(complete).otherwise(error);
+            Promise.delay(items, 1000).then(complete).otherwise(errorHandler);
+        }
+    }
+
+    public function refresh(resultHandler:Function, errorHandler:Function):void
+    {
+        if (simulateError)
+        {
+            var timeoutId:uint =
+                setTimeout(function():void
+                {
+                    clearTimeout(timeoutId);
+
+                    errorHandler(new Error("An error occurs during refresh collection."));
+                }, 1000);
+        }
+        else
+        {
+            var items:Array = [];
+
+            if (hasNewRecords)
+            {
+                for (var i:uint = 0, n:uint = numItemsInResponse; i < n; i++)
+                {
+                    var item:TodoItem = new TodoItem("Item # " + --newItemIndex);
+
+                    items.unshift(item);
+                }
+            }
+
+            Promise.delay(items, 1000).then(resultHandler).otherwise(errorHandler);
+        }
+    }
+
+    public function proceed(resultHandler:Function, errorHandler:Function):void
+    {
+        if (simulateError)
+        {
+            var timeoutId:uint =
+                setTimeout(function():void
+                   {
+                       clearTimeout(timeoutId);
+
+                       errorHandler(new Error("An error occurs during loading earlier items."));
+                   }, 1000);
+        }
+        else
+        {
+            var complete:Function = function(data:Array):void
+            {
+                resultHandler(data, hasOldRecords);
+            }
+
+            var items:Array = [];
+
+            if (hasOldRecords)
+            {
+                for (var i:uint = 0, n:uint = numItemsInResponse; i < n; i++)
+                {
+                    var item:TodoItem = new TodoItem("Item # " + oldItemIndex++);
+
+                    items.push(item);
+                }
+            }
+
+            Promise.delay(items, 1000).then(complete).otherwise(errorHandler);
+        }
     }
 
     public function reset():void

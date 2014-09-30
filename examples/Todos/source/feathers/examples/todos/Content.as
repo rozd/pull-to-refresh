@@ -1,5 +1,6 @@
 package feathers.examples.todos
 {
+import feathers.controls.Alert;
 import feathers.controls.Button;
 import feathers.controls.Callout;
 import feathers.controls.Header;
@@ -37,6 +38,7 @@ public class Content extends PanelScreen
     private var _input:TextInput;
     private var _editButton:ToggleButton;
     private var _resetButton:Button;
+    private var _settingsButton:Button;
     private var _toolbar:ScrollContainer;
 
     private function customHeaderFactory():Header
@@ -85,7 +87,6 @@ public class Content extends PanelScreen
         }
         this._toolbar.addChild(this._editButton);
 
-
         if(!this._resetButton)
         {
             this._resetButton = new Button();
@@ -93,6 +94,15 @@ public class Content extends PanelScreen
             this._resetButton.addEventListener(Event.TRIGGERED, resetButton_triggeredHandler);
         }
         this._toolbar.addChild(this._resetButton);
+
+        if(!this._settingsButton)
+        {
+            this._settingsButton = new Button();
+            this._settingsButton.styleNameList.add(Button.ALTERNATE_NAME_FORWARD_BUTTON);
+            this._settingsButton.label = "Settings";
+            this._settingsButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
+        }
+        this._toolbar.addChild(this._settingsButton);
 
         return this._toolbar;
     }
@@ -151,6 +161,11 @@ public class Content extends PanelScreen
     private function resetButton_triggeredHandler(event:Event):void
     {
         provider.reset();
+    }
+
+    private function settingsButton_triggeredHandler(event:Event):void
+    {
+        dispatchEventWith("toggleSettings");
     }
 
     private function stage_resizeHandler():void
