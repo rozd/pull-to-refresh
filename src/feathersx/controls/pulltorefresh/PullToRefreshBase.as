@@ -114,6 +114,8 @@ public class PullToRefreshBase extends List
     private var previousMaxScrollPosition:Number = NaN;
     private var previousScrollPosition:Number = NaN;
 
+    private var resetHeaderStateOnNextDraw:Boolean = true;
+
     //-------------------------------------
     //  Variables: Flags
     //-------------------------------------
@@ -684,6 +686,11 @@ public class PullToRefreshBase extends List
             }
         }
 
+        if (resetHeaderStateOnNextDraw)
+        {
+            doResetFreeHeader();
+        }
+
         super.draw();
     }
 
@@ -798,13 +805,7 @@ public class PullToRefreshBase extends List
     {
         super.completeScroll();
 
-        if (header)
-        {
-            if (header.state == HeaderState.FREE)
-            {
-                header.state = HeaderState.PULL;
-            }
-        }
+        resetFreeHeader();
     }
 
     override protected function throwTo(targetHorizontalScrollPosition:Number = NaN, targetVerticalScrollPosition:Number = NaN, duration:Number = 0.5):void
@@ -849,6 +850,36 @@ public class PullToRefreshBase extends List
 
                 _maxVerticalScrollPosition = _maxVerticalScrollPosition + footer.footerHeight;
             }
+        }
+    }
+
+    override protected function refreshScrollValues():void
+    {
+        super.refreshScrollValues();
+
+        if (_bounceBackMode == BounceBackMode.STAY_IN_PLACE &&
+            previousScrollPosition == previousScrollPosition &&
+            previousMaxScrollPosition == previousMaxScrollPosition)
+        {
+            // calculate scroll position for "stay in place" mode, considering
+            // items received in last refresh
+
+            var targetScrollPosition:Number = _maxVerticalScrollPosition - previousMaxScrollPosition + previousScrollPosition;
+
+            if (targetScrollPosition < _minVerticalScrollPosition)
+            {
+                targetScrollPosition = _minVerticalScrollPosition;
+            }
+            else if (targetScrollPosition > _maxVerticalScrollPosition)
+            {
+                targetScrollPosition = _maxVerticalScrollPosition;
+            }
+
+            verticalScrollPosition = targetScrollPosition;
+
+            previousMaxScrollPosition = previousScrollPosition = NaN;
+
+            resetFreeHeader();
         }
     }
 
@@ -963,6 +994,8 @@ public class PullToRefreshBase extends List
         }
 
         freeHeader();
+
+        invalidate(INVALIDATION_FLAG_DATA);
     }
 
     protected function refreshError(error:Error):void
@@ -1056,53 +1089,50 @@ public class PullToRefreshBase extends List
         {
             header.state = HeaderState.FREE;
 
-            stopScrolling();
-
             _minVerticalScrollPosition = originalMinScrollPosition;
 
             originalMinScrollPosition  = NaN;
 
             if (_bounceBackMode == BounceBackMode.JUMP_TO_EDGE || _maxVerticalScrollPosition <= 0)
             {
+                // if bounce-back is "jump to edge" or there are less items than
+                // list's height, scroll to top boundary
+
                 finishScrollingVertically();
             }
             else
             {
+                // otherwise store current scroll position and wait for next
+                // refreshScrollValues() call
+
                 previousScrollPosition = _verticalScrollPosition;
             }
         }
     }
 
-    override protected function clampScrollPositions():void
+    /** If Header is in "free" state, delays reset it to "pull" on the next draw. */
+    private function resetFreeHeader():void
     {
-        super.clampScrollPositions();
-
-        if (header.state == HeaderState.FREE)
+        if (header)
         {
-            Starling.juggler.delayCall(
-                function():void
-                {
-                    header.state = HeaderState.PULL;
-                },
-            0.1);
+            if (header.state == HeaderState.FREE)
+            {
+                resetHeaderStateOnNextDraw = true;
+            }
         }
+    }
 
-        if (_bounceBackMode == BounceBackMode.STAY_IN_PLACE && previousMaxScrollPosition == previousMaxScrollPosition && previousScrollPosition == previousScrollPosition)
+    /** Resets Header to "pull" state, if it is in "free" state. */
+    private function doResetFreeHeader():void
+    {
+        resetHeaderStateOnNextDraw = false;
+
+        if (header)
         {
-            var targetScrollPosition:Number = _maxVerticalScrollPosition - previousMaxScrollPosition + previousScrollPosition;
-
-            if (targetScrollPosition < _minVerticalScrollPosition)
+            if (header.state == HeaderState.FREE)
             {
-                targetScrollPosition = _minVerticalScrollPosition;
+                header.state = HeaderState.PULL;
             }
-            else if (targetScrollPosition > _maxVerticalScrollPosition)
-            {
-                targetScrollPosition = _maxVerticalScrollPosition;
-            }
-
-            verticalScrollPosition = targetScrollPosition;
-
-            previousMaxScrollPosition = previousScrollPosition = NaN;
         }
     }
 
@@ -1132,7 +1162,7 @@ public class PullToRefreshBase extends List
         {
             if (hasMoreRecords)
             {
-                footer.state = HeaderState.PULL;
+                footer.state = FooterState.PULL;
             }
             else
             {
@@ -1189,7 +1219,10 @@ public class PullToRefreshBase extends List
                 break;
 
             case STATE_LOADING :
-                    newCurrentIndicator = _loadingIndicatorFactory != null ? _loadingIndicatorFactory() : null;
+                    if (_dataProvider && _dataProvider.length > 0)
+                        newCurrentIndicator = null;
+                    else
+                        newCurrentIndicator = _loadingIndicatorFactory != null ? _loadingIndicatorFactory() : null;
                 break;
 
             case STATE_NORMAL :
