@@ -24,6 +24,8 @@ public class Main extends Drawers
         this.rightDrawer = settings;
 
         openGesture = Drawers.OPEN_GESTURE_DRAG_CONTENT;
+
+        rightDrawerToggleEventType = "toggleSettings";
     }
 
     override protected function initialize():void
