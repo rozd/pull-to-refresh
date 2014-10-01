@@ -54,7 +54,7 @@ this.pullToRefresh.refreshFunction = function(resultHandler:Function, errorHandl
 
 ```
 
-In this example we uses [as3-promises] to simulate server response. Also take a look on `hasMoreRecords` param, this is flag that indicates if there are more earlier data to load, and note that it is used only for `load` and `proceed` function, but not for `refresh`.
+In this example we uses [promise-as3](https://github.com/CodeCatalyst/promise-as3) to simulate server response. Also take a look on `hasMoreRecords` param, this is flag that indicates if there are more earlier data to load, and note that it is used only for `load` and `proceed` function, but not for `refresh`.
 
 ### Customizing Appearance
 
