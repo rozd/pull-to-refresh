@@ -163,3 +163,8 @@ public class TodoProvider extends ListCollection implements Provider
   }
 }
 ```
+
+## Donating
+Support this project an others via [Gratipay](https://gratipay.com/rozd/).
+
+[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.1.3/dist/gratipay.png)](https://gratipay.com/rozd/)
