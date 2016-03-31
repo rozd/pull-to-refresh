@@ -51,6 +51,7 @@ public class DefaultEmptyIndicator extends FeathersControl implements EmptyIndic
         addChild(icon);
 
         label = new Label();
+        label.wordWrap = true;
         addChild(label);
     }
 

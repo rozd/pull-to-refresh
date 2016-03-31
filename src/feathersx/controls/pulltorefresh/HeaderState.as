@@ -25,8 +25,13 @@ public class HeaderState
     public static const LOADING:String = "loading";
 
     /**
-     * Indicates state when loading is done (succeeded or failed).
+     * Indicates state when loading is complete (succeeded or failed).
      */
     public static const FREE:String = "free";
+
+    /**
+     * Indicates state when Server will never have new items to refresh.
+     */
+    public static const DONE:String = "done";
 }
 }

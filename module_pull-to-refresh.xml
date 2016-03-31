@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pull-to-refresh" default="compile.module.pull-to-refresh">
+  <dirname property="module.pull-to-refresh.basedir" file="${ant.file.module_pull-to-refresh}"/>
+  
+  <property name="module.jdk.home.pull-to-refresh" value="${jdk.home.17.0.0.96}"/>
+  <property name="module.jdk.bin.pull-to-refresh" value="${jdk.bin.17.0.0.96}"/>
+  <property name="module.jdk.classpath.pull-to-refresh" value="jdk.classpath.17.0.0.96"/>
+  
+  <property name="compiler.args.pull-to-refresh" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  
+  <property name="pull-to-refresh.output.dir" value="//../mobitile/client/mobitile/out/production/pull-to-refresh"/>
+  <property name="pull-to-refresh.testoutput.dir" value="//../mobitile/client/mobitile/out/test/pull-to-refresh"/>
+  
+  <path id="pull-to-refresh.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pull-to-refresh.module.production.classpath">
+    <path refid="${module.jdk.classpath.pull-to-refresh}"/>
+    <pathelement location="${feathers.output.dir}"/>
+    <pathelement location="${starling.output.dir}"/>
+  </path>
+  
+  <path id="pull-to-refresh.runtime.production.module.classpath">
+    <pathelement location="${pull-to-refresh.output.dir}"/>
+    <path refid="feathers.runtime.production.module.classpath"/>
+    <path refid="starling.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="pull-to-refresh.module.classpath">
+    <path refid="${module.jdk.classpath.pull-to-refresh}"/>
+    <pathelement location="${pull-to-refresh.output.dir}"/>
+    <pathelement location="${feathers.testoutput.dir}"/>
+    <pathelement location="${feathers.output.dir}"/>
+    <pathelement location="${starling.testoutput.dir}"/>
+    <pathelement location="${starling.output.dir}"/>
+  </path>
+  
+  <path id="pull-to-refresh.runtime.module.classpath">
+    <pathelement location="${pull-to-refresh.testoutput.dir}"/>
+    <pathelement location="${pull-to-refresh.output.dir}"/>
+    <path refid="feathers.runtime.module.classpath"/>
+    <path refid="starling.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pull-to-refresh">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pull-to-refresh">
+    <patternset refid="excluded.from.module.pull-to-refresh"/>
+  </patternset>
+  
+  <path id="pull-to-refresh.module.sourcepath">
+    <dirset dir="/">
+      <include name="src"/>
+      <include name="assets"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pull-to-refresh" depends="compile.module.pull-to-refresh.production,compile.module.pull-to-refresh.tests" description="Compile module pull-to-refresh"/>
+  
+  <target name="compile.module.pull-to-refresh.production" depends="register.custom.compilers,compile.module.feathers,compile.module.starling" description="Compile module pull-to-refresh; production classes">
+    <mkdir dir="${pull-to-refresh.output.dir}"/>
+    <javac2 destdir="${pull-to-refresh.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pull-to-refresh}/javac">
+      <compilerarg line="${compiler.args.pull-to-refresh}"/>
+      <bootclasspath refid="pull-to-refresh.module.bootclasspath"/>
+      <classpath refid="pull-to-refresh.module.production.classpath"/>
+      <src refid="pull-to-refresh.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pull-to-refresh"/>
+    </javac2>
+    
+    <copy todir="${pull-to-refresh.output.dir}">
+      <fileset dir="//src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="//assets">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pull-to-refresh.tests" depends="register.custom.compilers,compile.module.pull-to-refresh.production" description="compile module pull-to-refresh; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pull-to-refresh" description="cleanup module">
+    <delete dir="${pull-to-refresh.output.dir}"/>
+    <delete dir="${pull-to-refresh.testoutput.dir}"/>
+  </target>
+</project>

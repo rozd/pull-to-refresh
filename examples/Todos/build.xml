@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="todos" default="build" basedir=".">
+<project name="todos" default="build" basedir="">
 	
 	<!-- build.local.properties and sdk.local.proprties are optional files that
 		can be used to override the default properties. -->
 	<property file="./sdk.local.properties"/>
-	<property file="./sdk.properties"/>
+	<property file="sdk.properties"/>
 	<property file="./build.local.properties"/>
-	<property file="./build.properties"/>
+	<property file="build.properties"/>
 	
 	<fail unless="ios.provision.path"/>
 	<fail unless="ios.certificate.path"/>

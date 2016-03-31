@@ -8,7 +8,9 @@ import flash.display.StageScaleMode;
 import flash.events.Event;
 import flash.text.TextField;
 
-import pulltorefresh.examples.Main;
+import pulltorefresh.examples.PagedListScreen;
+
+import pulltorefresh.examples.PullToRefreshScreen;
 
 import starling.core.Starling;
 
@@ -36,7 +38,7 @@ public class HelloWorld extends Sprite
     {
         Starling.handleLostContext = true;
         Starling.multitouchEnabled = true;
-        this._starling = new Starling(Main, this.stage);
+        this._starling = new Starling(PagedListScreen, this.stage);
         this._starling.enableErrorChecking = false;
         this._starling.start();
     }

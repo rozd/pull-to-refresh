@@ -16,6 +16,7 @@ import feathers.examples.todos.controls.TodoItemRenderer;
 import feathers.examples.todos.provider.TodoProvider;
 import feathers.layout.AnchorLayout;
 import feathers.layout.AnchorLayoutData;
+import feathers.layout.VerticalLayout;
 import feathers.themes.MetalWorksMobileTheme;
 
 import feathersx.controls.PullToRefresh;
@@ -120,6 +121,10 @@ public class Content extends PanelScreen
         this.headerFactory = this.customHeaderFactory;
         this.footerFactory = this.customFooterFactory;
 
+        var l:VerticalLayout = new VerticalLayout();
+        l.hasVariableItemDimensions = true;
+
+        this.list.layout = l;
         this.list.isSelectable = false;
         this.list.dataProvider = provider;
         this.list.itemRendererType = TodoItemRenderer;

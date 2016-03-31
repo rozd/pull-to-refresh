@@ -2,7 +2,7 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="Todos (mobile)">
     <configurations>
-      <configuration name="Todos (mobile)" target-platform="Mobile" pure-as="true" main-class="Todos" output-file="Todos.swf" output-folder="$MODULE_DIR$/bin">
+      <configuration name="Todos (mobile)" target-platform="Mobile" pure-as="true" main-class="Todos" output-file="Todos.swf" output-folder="$MODULE_DIR$/../../../../pull-to-refresh/examples/Todos/bin">
         <dependencies>
           <entries>
             <entry module-name="feathers" build-configuration-name="feathers">
@@ -18,17 +18,17 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="15.0.0.249" />
+          <sdk name="19.0.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
         <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/source/Todos-app.xml" package-file-name="Todos" />
         <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/source/Todos-app.xml" package-file-name="Todos">
-          <AirSigningOptions keystore-path="$USER_HOME$/ios/certificate/ios_air_development.p12" provisioning-profile-path="$USER_HOME$/ios/provisioning/Generic_Profile.mobileprovision" />
+          <AirSigningOptions keystore-path="$USER_HOME$/ios/certificate/ios_development.p12" provisioning-profile-path="$USER_HOME$/ios/provisioning/generic.mobileprovision" />
         </packaging-ios>
       </configuration>
       <configuration name="Todos (web)" pure-as="true" main-class="TodosWeb" output-file="TodosWeb.swf" output-folder="$MODULE_DIR$/bin" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
-        <dependencies target-player="15.0">
+        <dependencies target-player="19.0">
           <entries>
             <entry module-name="pull-to-refresh" build-configuration-name="pull-to-refresh">
               <dependency linkage="Merged" />
@@ -43,7 +43,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="15.0.0.249" />
+          <sdk name="19.0.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -58,7 +58,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/source" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="15.0.0.249" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="19.0.0" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="feathers" exported="" />
     <orderEntry type="module" module-name="starling" exported="" />
@@ -66,4 +66,3 @@
     <orderEntry type="module" module-name="pull-to-refresh" exported="" />
   </component>
 </module>
-

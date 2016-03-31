@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_helloworld" default="compile.module.helloworld">
+  <dirname property="module.helloworld.basedir" file="${ant.file.module_helloworld}"/>
+  
+  <property name="module.jdk.home.helloworld" value="${jdk.home.15.0.0.249}"/>
+  <property name="module.jdk.bin.helloworld" value="${jdk.bin.15.0.0.249}"/>
+  <property name="module.jdk.classpath.helloworld" value="jdk.classpath.15.0.0.249"/>
+  
+  <property name="compiler.args.helloworld" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  
+  <property name="helloworld.output.dir" value="${module.helloworld.basedir}/../../../mobitile/client/mobitile/out/production/HelloWorld"/>
+  <property name="helloworld.testoutput.dir" value="${module.helloworld.basedir}/../../../mobitile/client/mobitile/out/test/HelloWorld"/>
+  
+  <path id="helloworld.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="helloworld.module.production.classpath">
+    <path refid="${module.jdk.classpath.helloworld}"/>
+    <pathelement location="${feathers.output.dir}"/>
+    <pathelement location="${starling.output.dir}"/>
+    <pathelement location="${pull-to-refresh.output.dir}"/>
+    <fileset dir="//examples/HelloWorld/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="helloworld.runtime.production.module.classpath">
+    <pathelement location="${helloworld.output.dir}"/>
+    <path refid="feathers.runtime.production.module.classpath"/>
+    <path refid="pull-to-refresh.runtime.production.module.classpath"/>
+    <path refid="starling.runtime.production.module.classpath"/>
+    <fileset dir="//examples/HelloWorld/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="helloworld.module.classpath">
+    <path refid="${module.jdk.classpath.helloworld}"/>
+    <pathelement location="${helloworld.output.dir}"/>
+    <pathelement location="${feathers.testoutput.dir}"/>
+    <pathelement location="${feathers.output.dir}"/>
+    <pathelement location="${starling.testoutput.dir}"/>
+    <pathelement location="${starling.output.dir}"/>
+    <pathelement location="${pull-to-refresh.testoutput.dir}"/>
+    <pathelement location="${pull-to-refresh.output.dir}"/>
+    <fileset dir="//examples/HelloWorld/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="helloworld.runtime.module.classpath">
+    <pathelement location="${helloworld.testoutput.dir}"/>
+    <pathelement location="${helloworld.output.dir}"/>
+    <path refid="feathers.runtime.module.classpath"/>
+    <path refid="pull-to-refresh.runtime.module.classpath"/>
+    <path refid="starling.runtime.module.classpath"/>
+    <fileset dir="//examples/HelloWorld/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.helloworld">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.helloworld">
+    <patternset refid="excluded.from.module.helloworld"/>
+  </patternset>
+  
+  <path id="helloworld.module.sourcepath">
+    <dirset dir="${module.helloworld.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.helloworld" depends="compile.module.helloworld.production,compile.module.helloworld.tests" description="Compile module HelloWorld"/>
+  
+  <target name="compile.module.helloworld.production" depends="register.custom.compilers,compile.module.feathers,compile.module.pull-to-refresh,compile.module.starling" description="Compile module HelloWorld; production classes">
+    <mkdir dir="${helloworld.output.dir}"/>
+    <javac2 destdir="${helloworld.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.helloworld}/javac">
+      <compilerarg line="${compiler.args.helloworld}"/>
+      <bootclasspath refid="helloworld.module.bootclasspath"/>
+      <classpath refid="helloworld.module.production.classpath"/>
+      <src refid="helloworld.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.helloworld"/>
+    </javac2>
+    
+    <copy todir="${helloworld.output.dir}">
+      <fileset dir="${module.helloworld.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.helloworld.tests" depends="register.custom.compilers,compile.module.helloworld.production" description="compile module HelloWorld; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.helloworld" description="cleanup module">
+    <delete dir="${helloworld.output.dir}"/>
+    <delete dir="${helloworld.testoutput.dir}"/>
+  </target>
+</project>

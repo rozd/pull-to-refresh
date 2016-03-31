@@ -141,6 +141,15 @@ public class DefaultFooter extends FeathersControl implements Footer
                     spinnerTween = null;
 
                     break;
+
+                case FooterState.FREE :
+
+                    spinner.visible = true;
+
+                    Starling.juggler.remove(spinnerTween);
+                    spinnerTween = null;
+
+                    break;
             }
         }
 

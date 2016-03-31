@@ -9,6 +9,7 @@ package feathersx.controls.pulltorefresh
 {
 import feathers.controls.List;
 import feathers.data.ListCollection;
+import feathers.skins.IStyleProvider;
 
 import feathersx.controls.pulltorefresh.impl.DefaultEmptyIndicator;
 import feathersx.controls.pulltorefresh.impl.DefaultErrorIndicator;
@@ -16,7 +17,6 @@ import feathersx.controls.pulltorefresh.impl.DefaultFooter;
 import feathersx.controls.pulltorefresh.impl.DefaultHeader;
 import feathersx.controls.pulltorefresh.impl.DefaultLoadingIndicator;
 
-import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.events.Event;
 
@@ -34,6 +34,9 @@ public class PullToRefreshBase extends List
     /** Invalidation flag that indicates that Footer appearance has changed.*/
     public static const INVALIDATION_FLAG_FOOTER:String = "footer";
 
+    /** Invalidation flag that indicates that data should be reload.*/
+    public static const INVALIDATION_FLAG_ITEMS:String = "items";
+
     /** Indicates normal state. */
     public static const STATE_NORMAL:String = "normal";
 
@@ -45,6 +48,23 @@ public class PullToRefreshBase extends List
 
     /** Indicates empty state, when EmptyIndicator could be shown. */
     public static const STATE_EMPTY:String = "empty";
+
+    //--------------------------------------------------------------------------
+    //
+    //  Class variables
+    //
+    //--------------------------------------------------------------------------
+
+    /**
+     * The default <code>IStyleProvider</code> for all <code>ToggleButton</code>
+     * components. If <code>null</code>, falls back to using
+     * <code>Button.globalStyleProvider</code> instead.
+     *
+     * @default null
+     * @see feathers.core.FeathersControl#styleProvider
+     * @see feathers.controls.Button#globalStyleProvider
+     */
+    public static var globalStyleProvider:IStyleProvider;
 
     //--------------------------------------------------------------------------
     //
@@ -120,8 +140,11 @@ public class PullToRefreshBase extends List
     //  Variables: Flags
     //-------------------------------------
 
-    /** Indicates if Server has data to proceed */
-    protected var hasMoreRecords:Boolean = false;
+    /** Indicates if there are records for continue loading. */
+    protected var hasOldRecords:Boolean = true;
+
+    /** Indicates if there are new records. */
+    protected var hasNewRecords:Boolean = true;
 
     /** Indicates if loading initial data in progress */
     protected var isLoading:Boolean;
@@ -132,11 +155,30 @@ public class PullToRefreshBase extends List
     /** Indicates if loading previous data in progress */
     protected var isProceeding:Boolean;
 
-    /** Indicates if Footer is visible when there is no previous data on the Server */
+    /** Indicates if Footer is visible if there is no earlier data on the Server */
     public var showFooterWhenDone:Boolean;
 
     /** Indicates if loading should be started immediately on List created. */
     public var loadImmediately:Boolean;
+
+    //--------------------------------------------------------------------------
+    //
+    //  Overridden properties
+    //
+    //--------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    override protected function get defaultStyleProvider():IStyleProvider
+    {
+        if (PullToRefreshBase.globalStyleProvider)
+        {
+            return PullToRefreshBase.globalStyleProvider;
+        }
+
+        return List.globalStyleProvider;
+    }
 
     //--------------------------------------------------------------------------
     //
@@ -190,6 +232,8 @@ public class PullToRefreshBase extends List
         _currentState = value;
         invalidate(INVALIDATION_FLAG_STATE);
     }
+
+    protected var previousState:String = null;
 
     //-------------------------------------
     //  headerFactory
@@ -419,7 +463,7 @@ public class PullToRefreshBase extends List
      * }
      * </listing>
      *
-     * @see #insertData
+     * @see #loadComplete
      * @see #errorIndicatorFactory
      */
     public function get loadFunction():Function
@@ -464,7 +508,7 @@ public class PullToRefreshBase extends List
      * }
      * </listing>
      *
-     * @see #appendData
+     * @see #refreshResult
      * @see #errorIndicatorFactory
      */
     public function get refreshFunction():Function
@@ -511,7 +555,7 @@ public class PullToRefreshBase extends List
      * }
      * </listing>
      *
-     * @see #insertData
+     * @see #loadComplete
      * @see #errorIndicatorFactory
      */
 
@@ -537,7 +581,7 @@ public class PullToRefreshBase extends List
      * A function that allows to override inserting initial items default functionality.
      *
      * <listing version="3.0">
-     * pullToRefresh.prependDataFunction = function(items:Array):void
+     * pullToRefresh.insertDataFunction = function(items:Array):void
      * {
      *     // handle received items before they will be added to the collection
      *     items.forEach(doSomethingWithArrayItem);
@@ -569,7 +613,7 @@ public class PullToRefreshBase extends List
      * A function that allows to override appending new items default functionality.
      *
      * <listing version="3.0">
-     * pullToRefresh.prependDataFunction = function(items:Array):void
+     * pullToRefresh.appendDataFunction = function(items:Array):void
      * {
      *     // handle received items before they will be added to the collection
      *     items.forEach(doSomethingWithArrayItem);
@@ -634,15 +678,24 @@ public class PullToRefreshBase extends List
         super.initialize();
 
         if (loadImmediately)
-            load();
+            invalidate(INVALIDATION_FLAG_ITEMS);
     }
 
     override protected function draw():void
     {
+        var itemsInvalid:Boolean = isInvalid(INVALIDATION_FLAG_ITEMS);
         var sizeInvalid:Boolean = isInvalid(INVALIDATION_FLAG_SIZE);
         var stateInvalid:Boolean = isInvalid(INVALIDATION_FLAG_STATE);
         var headerInvalid:Boolean = isInvalid(INVALIDATION_FLAG_HEADER);
         var footerInvalid:Boolean = isInvalid(INVALIDATION_FLAG_FOOTER);
+
+        if (itemsInvalid)
+        {
+            // TODO: This should reset PTR when dataProvider is reset
+            isLoading = isRefreshing = isProceeding = false;
+
+            load();
+        }
 
         if (stateInvalid)
         {
@@ -704,37 +757,51 @@ public class PullToRefreshBase extends List
 
             if (_verticalScrollPosition < 0)
             {
-                showHeader();
-
-                if (header.state == HeaderState.LOADING)
+                if (header.state != HeaderState.DONE)
                 {
-                    headerAsDisplayObject.height = Math.max(Math.abs(_verticalScrollPosition), header.headerHeight);
+                    showHeader();
 
-                    if (Math.abs(_verticalScrollPosition) < header.headerHeight)
+                    if (header.state == HeaderState.LOADING)
                     {
-                        headerAsDisplayObject.y = Math.abs(_verticalScrollPosition) - header.headerHeight;
+                        headerAsDisplayObject.height = Math.max(Math.abs(_verticalScrollPosition), header.headerHeight);
+
+                        if (Math.abs(_verticalScrollPosition) < header.headerHeight)
+                        {
+                            headerAsDisplayObject.y = Math.abs(_verticalScrollPosition) - header.headerHeight;
+                        }
+                        else
+                        {
+                            headerAsDisplayObject.y = 0;
+                        }
                     }
                     else
                     {
+                        if (header.state == HeaderState.FREE)
+                        {
+                            if (Math.abs(_verticalScrollPosition) < header.headerHeight)
+                            {
+                                header.state = HeaderState.PULL;
+                            }
+                        }
+                        else
+                        {
+                            if (Math.abs(_verticalScrollPosition) > header.headerHeight)
+                            {
+                                header.state = HeaderState.RELEASE;
+                            }
+                            else
+                            {
+                                header.state = HeaderState.PULL;
+                            }
+                        }
+
                         headerAsDisplayObject.y = 0;
+                        headerAsDisplayObject.height = Math.abs(_verticalScrollPosition)
                     }
                 }
                 else
                 {
-                    if (header.state != HeaderState.FREE)
-                    {
-                        if (Math.abs(_verticalScrollPosition) > header.headerHeight)
-                        {
-                            header.state = HeaderState.RELEASE;
-                        }
-                        else
-                        {
-                            header.state = HeaderState.PULL;
-                        }
-                    }
-
-                    headerAsDisplayObject.y = 0;
-                    headerAsDisplayObject.height = Math.abs(_verticalScrollPosition)
+                    hideHeader();
                 }
             }
             else
@@ -753,20 +820,62 @@ public class PullToRefreshBase extends List
                 {
                     showFooter();
 
-                    if (footer.state != FooterState.LOADING && footer.state != FooterState.DONE)
+                    if (footer.state == FooterState.LOADING)
                     {
-                        if (_verticalScrollPosition > _maxVerticalScrollPosition - footer.footerHeight - 40)
+
+                    }
+                    else
+                    {
+                        if (footer.state == FooterState.FREE)
                         {
-                            footer.state = FooterState.RELEASE;
+                            if (_verticalScrollPosition < _maxVerticalScrollPosition + footer.footerHeight)
+                            {
+                                if (hasOldRecords)
+                                    footer.state = FooterState.PULL;
+                                else
+                                    footer.state = FooterState.DONE;
+                            }
                         }
-                        else if (footer.state != FooterState.LOADING)
+                        else
                         {
-                            footer.state = FooterState.PULL;
+                            if (_verticalScrollPosition > _maxVerticalScrollPosition - footer.footerHeight)
+                            {
+                                footer.state = FooterState.RELEASE;
+                            }
+                            else
+                            {
+                                footer.state = FooterState.PULL;
+                            }
                         }
                     }
 
                     footerAsDisplayObject.y = _viewPort.height - _verticalScrollPosition + _topViewPortOffset + _bottomViewPortOffset;
                     footerAsDisplayObject.height = Math.max(actualHeight - footerAsDisplayObject.y, 0);
+
+//                    if (footer.state == FooterState.FREE)
+//                    {
+//                        if (_verticalScrollPosition < _maxVerticalScrollPosition + footer.footerHeight + 40)
+//                        {
+//                            if (hasMoreRecords)
+//                                footer.state = FooterState.PULL;
+//                            else
+//                                footer.state = FooterState.DONE;
+//                        }
+//                    }
+//                    else if (footer.state != FooterState.LOADING && footer.state != FooterState.DONE)
+//                    {
+//                        if (_verticalScrollPosition > _maxVerticalScrollPosition - footer.footerHeight - 40)
+//                        {
+//                            footer.state = FooterState.RELEASE;
+//                        }
+//                        else if (footer.state != FooterState.LOADING)
+//                        {
+//                            footer.state = FooterState.PULL;
+//                        }
+//                    }
+//
+//                    footerAsDisplayObject.y = _viewPort.height - _verticalScrollPosition + _topViewPortOffset + _bottomViewPortOffset;
+//                    footerAsDisplayObject.height = Math.max(actualHeight - footerAsDisplayObject.y, 0);
                 }
                 else
                 {
@@ -844,7 +953,7 @@ public class PullToRefreshBase extends List
 
         if (footer)
         {
-            if (hasMoreRecords)
+            if (hasOldRecords)
             {
                 originalMaxScrollPosition = _maxVerticalScrollPosition;
 
@@ -902,15 +1011,19 @@ public class PullToRefreshBase extends List
             {
                 isLoading = true;
 
+                previousState = _currentState;
+
                 setCurrentState(STATE_LOADING);
 
-                _loadFunction(insertData, handleError);
+                _loadFunction(loadComplete, loadError);
             }
         }
     }
 
-    protected function insertData(data:Array, hasMoreRecords:Boolean = false):void
+    protected function loadComplete(data:Array, hasOldRecords:Boolean = false, hasNewRecords:Boolean = true):void
     {
+        isLoading = false;
+
         if (_dataProvider == null)
             _dataProvider = new ListCollection();
 
@@ -923,8 +1036,6 @@ public class PullToRefreshBase extends List
             _dataProvider.data = data;
         }
 
-        isLoading = false;
-
         if (_dataProvider.length == 0)
         {
             setCurrentState(STATE_EMPTY);
@@ -934,10 +1045,28 @@ public class PullToRefreshBase extends List
             setCurrentState(STATE_NORMAL);
         }
 
-        this.hasMoreRecords = hasMoreRecords;
+        this.hasOldRecords = hasOldRecords;
+        this.hasNewRecords = hasNewRecords;
 
         freeHeader();
         freeFooter();
+    }
+
+    protected function loadError(error:*=undefined):void
+    {
+        isLoading = false;
+
+        if (error == undefined) // cancelled
+        {
+            setCurrentState(previousState);
+
+            freeHeader();
+            freeFooter();
+        }
+        else // error
+        {
+            handleError(error);
+        }
     }
 
     //--------------------------------------
@@ -959,27 +1088,29 @@ public class PullToRefreshBase extends List
                 {
                     header.state = HeaderState.LOADING;
 
-                    _refreshFunction(appendData, refreshError);
+                    _refreshFunction(refreshResult, refreshError);
 
                     previousMaxScrollPosition = _maxVerticalScrollPosition;
                 }
                 else
                 {
+                    header.state = HeaderState.LOADING;
+
                     freeHeader();
                 }
             }
         }
     }
 
-    protected function appendData(data:Array):void
+    protected function refreshResult(items:Array, hasNewRecords:Boolean = true):void
     {
         if (_appendDataFunction != null)
         {
-            _appendDataFunction(data);
+            _appendDataFunction(items);
         }
         else
         {
-            _dataProvider.addAllAt(new ListCollection(data), 0);
+            _dataProvider.addAllAt(new ListCollection(items), 0);
         }
 
         isRefreshing = false;
@@ -993,16 +1124,25 @@ public class PullToRefreshBase extends List
             setCurrentState(STATE_NORMAL);
         }
 
+        this.hasNewRecords = hasNewRecords;
+
         freeHeader();
 
         invalidate(INVALIDATION_FLAG_DATA);
     }
 
-    protected function refreshError(error:Error):void
+    protected function refreshError(error:*=undefined):void
     {
         isRefreshing = false;
 
-        handleError(error);
+        if (error == undefined) // cancelled
+        {
+            freeHeader();
+        }
+        else // error
+        {
+            handleError(error);
+        }
     }
 
     //--------------------------------------
@@ -1020,7 +1160,7 @@ public class PullToRefreshBase extends List
 
                 footer.state = FooterState.LOADING;
 
-                _proceedFunction(prependData, proceedError);
+                _proceedFunction(proceedResult, proceedError);
             }
             else
             {
@@ -1029,7 +1169,7 @@ public class PullToRefreshBase extends List
         }
     }
 
-    protected function prependData(data:Array, hasMoreRecords:Boolean = false):void
+    protected function proceedResult(data:Array, hasOldRecords:Boolean = false):void
     {
         if (_prependDataFunction != null)
         {
@@ -1051,16 +1191,23 @@ public class PullToRefreshBase extends List
             setCurrentState(STATE_NORMAL);
         }
 
-        this.hasMoreRecords = hasMoreRecords;
+        this.hasOldRecords = hasOldRecords;
 
         freeFooter();
     }
 
-    protected function proceedError(error:Error):void
+    protected function proceedError(error:*=undefined):void
     {
         isProceeding = false;
 
-        handleError(error);
+        if (error == undefined) // cancelled
+        {
+            freeFooter();
+        }
+        else // error
+        {
+            handleError(error);
+        }
     }
 
     //--------------------------------------
@@ -1087,25 +1234,40 @@ public class PullToRefreshBase extends List
     {
         if (header)
         {
-            header.state = HeaderState.FREE;
-
-            _minVerticalScrollPosition = originalMinScrollPosition;
-
-            originalMinScrollPosition  = NaN;
-
-            if (_bounceBackMode == BounceBackMode.JUMP_TO_EDGE || _maxVerticalScrollPosition <= 0)
+            if (header.state == HeaderState.LOADING)
             {
-                // if bounce-back is "jump to edge" or there are less items than
-                // list's height, scroll to top boundary
+                header.state = HeaderState.FREE;
 
-                finishScrollingVertically();
+                _minVerticalScrollPosition = originalMinScrollPosition;
+
+                originalMinScrollPosition = NaN;
+
+                if (_bounceBackMode == BounceBackMode.JUMP_TO_EDGE || _maxVerticalScrollPosition <= 0)
+                {
+                    // If bounce-back is "jump to edge" or there are less items than
+                    // list's height, scroll to top boundary. Header will be reset
+                    // in completeScroll() in this case.
+
+                    finishScrollingVertically();
+                }
+                else
+                {
+                    // Otherwise store current scroll position and wait for next
+                    // refreshScrollValues() call, where Header will be reset.
+
+                    previousScrollPosition = _verticalScrollPosition;
+                }
             }
             else
             {
-                // otherwise store current scroll position and wait for next
-                // refreshScrollValues() call
-
-                previousScrollPosition = _verticalScrollPosition;
+                if (hasNewRecords)
+                {
+                    header.state = HeaderState.PULL;
+                }
+                else
+                {
+                    header.state = HeaderState.DONE;
+                }
             }
         }
     }
@@ -1113,13 +1275,13 @@ public class PullToRefreshBase extends List
     /** If Header is in "free" state, delays reset it to "pull" on the next draw. */
     private function resetFreeHeader():void
     {
-        if (header)
-        {
-            if (header.state == HeaderState.FREE)
-            {
-                resetHeaderStateOnNextDraw = true;
-            }
-        }
+//        if (header)
+//        {
+//            if (header.state == HeaderState.FREE)
+//            {
+//                resetHeaderStateOnNextDraw = true;
+//            }
+//        }
     }
 
     /** Resets Header to "pull" state, if it is in "free" state. */
@@ -1132,6 +1294,15 @@ public class PullToRefreshBase extends List
             if (header.state == HeaderState.FREE)
             {
                 header.state = HeaderState.PULL;
+
+//                if (hasLaterRecords)
+//                {
+//                    header.state = HeaderState.PULL;
+//                }
+//                else
+//                {
+//                    header.state = HeaderState.DONE;
+//                }
             }
         }
     }
@@ -1160,13 +1331,25 @@ public class PullToRefreshBase extends List
     {
         if (footer)
         {
-            if (hasMoreRecords)
+            if (footer.state == FooterState.LOADING)
             {
-                footer.state = FooterState.PULL;
+                footer.state = FooterState.FREE;
+
+                if (!hasOldRecords)
+                    _maxVerticalScrollPosition = originalMaxScrollPosition;
+
+                finishScrollingVertically();
             }
             else
             {
-                footer.state = FooterState.DONE;
+                if (hasOldRecords)
+                {
+                    footer.state = FooterState.PULL;
+                }
+                else
+                {
+                    footer.state = FooterState.DONE;
+                }
             }
         }
     }
@@ -1177,7 +1360,8 @@ public class PullToRefreshBase extends List
 
     protected function handleError(error:Error):void
     {
-        isLoading = false;
+        // hide footer
+        _maxVerticalScrollPosition = originalMaxScrollPosition;
 
         freeHeader();
         freeFooter();
@@ -1243,6 +1427,22 @@ public class PullToRefreshBase extends List
             {
                 addRawChildInternal(currentIndicator);
             }
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Overridden event handlers
+    //
+    //--------------------------------------------------------------------------
+
+    override protected function dataProvider_changeHandler(event:Event):void
+    {
+        super.dataProvider_changeHandler(event);
+
+        if (_dataProvider.length > 0 && _currentState == STATE_EMPTY)
+        {
+            setCurrentState(STATE_NORMAL);
         }
     }
 }

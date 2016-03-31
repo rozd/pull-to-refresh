@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_todos" default="compile.module.todos">
+  <dirname property="module.todos.basedir" file="${ant.file.module_todos}"/>
+  
+  <property name="module.jdk.home.todos" value="${jdk.home.15.0.0.356_15.0.0.249}"/>
+  <property name="module.jdk.bin.todos" value="${jdk.bin.15.0.0.356_15.0.0.249}"/>
+  <property name="module.jdk.classpath.todos" value="jdk.classpath.15.0.0.356_15.0.0.249"/>
+  
+  <property name="compiler.args.todos" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  
+  <property name="todos.output.dir" value="${module.todos.basedir}/../../../mobitile/client/mobitile/out/production/Todos"/>
+  <property name="todos.testoutput.dir" value="${module.todos.basedir}/../../../mobitile/client/mobitile/out/test/Todos"/>
+  
+  <path id="todos.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="todos.module.production.classpath">
+    <path refid="${module.jdk.classpath.todos}"/>
+    <pathelement location="${feathers.output.dir}"/>
+    <pathelement location="${starling.output.dir}"/>
+    <pathelement location="${promise-as3.output.dir}"/>
+    <pathelement location="${pull-to-refresh.output.dir}"/>
+  </path>
+  
+  <path id="todos.runtime.production.module.classpath">
+    <pathelement location="${todos.output.dir}"/>
+    <path refid="feathers.runtime.production.module.classpath"/>
+    <path refid="starling.runtime.production.module.classpath"/>
+    <path refid="promise-as3.runtime.production.module.classpath"/>
+    <path refid="pull-to-refresh.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="todos.module.classpath">
+    <path refid="${module.jdk.classpath.todos}"/>
+    <pathelement location="${todos.output.dir}"/>
+    <pathelement location="${feathers.testoutput.dir}"/>
+    <pathelement location="${feathers.output.dir}"/>
+    <pathelement location="${starling.testoutput.dir}"/>
+    <pathelement location="${starling.output.dir}"/>
+    <pathelement location="${promise-as3.testoutput.dir}"/>
+    <pathelement location="${promise-as3.output.dir}"/>
+    <pathelement location="${pull-to-refresh.testoutput.dir}"/>
+    <pathelement location="${pull-to-refresh.output.dir}"/>
+  </path>
+  
+  <path id="todos.runtime.module.classpath">
+    <pathelement location="${todos.testoutput.dir}"/>
+    <pathelement location="${todos.output.dir}"/>
+    <path refid="feathers.runtime.module.classpath"/>
+    <path refid="starling.runtime.module.classpath"/>
+    <path refid="promise-as3.runtime.module.classpath"/>
+    <path refid="pull-to-refresh.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.todos">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.todos">
+    <patternset refid="excluded.from.module.todos"/>
+  </patternset>
+  
+  <path id="todos.module.sourcepath">
+    <dirset dir="${module.todos.basedir}">
+      <include name="source"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.todos" depends="compile.module.todos.production,compile.module.todos.tests" description="Compile module Todos"/>
+  
+  <target name="compile.module.todos.production" depends="register.custom.compilers,compile.module.feathers,compile.module.starling,compile.module.promise-as3,compile.module.pull-to-refresh" description="Compile module Todos; production classes">
+    <mkdir dir="${todos.output.dir}"/>
+    <javac2 destdir="${todos.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.todos}/javac">
+      <compilerarg line="${compiler.args.todos}"/>
+      <bootclasspath refid="todos.module.bootclasspath"/>
+      <classpath refid="todos.module.production.classpath"/>
+      <src refid="todos.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.todos"/>
+    </javac2>
+    
+    <copy todir="${todos.output.dir}">
+      <fileset dir="${module.todos.basedir}/source">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.todos.tests" depends="register.custom.compilers,compile.module.todos.production" description="compile module Todos; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.todos" description="cleanup module">
+    <delete dir="${todos.output.dir}"/>
+    <delete dir="${todos.testoutput.dir}"/>
+  </target>
+</project>

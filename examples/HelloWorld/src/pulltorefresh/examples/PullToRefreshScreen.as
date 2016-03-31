@@ -13,9 +13,9 @@ import feathers.themes.MetalWorksMobileTheme;
 
 import feathersx.controls.PullToRefresh;
 
-public class Main extends PanelScreen
+public class PullToRefreshScreen extends PanelScreen
 {
-    public function Main()
+    public function PullToRefreshScreen()
     {
         super();
 

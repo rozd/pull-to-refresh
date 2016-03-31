@@ -10,9 +10,19 @@ package feathers.examples.todos.controls
 
 	public class TodoItemRenderer extends DefaultListItemRenderer
 	{
+		private static var COUNT:int;
+
+		private var count = COUNT;
+
 		public function TodoItemRenderer()
 		{
 			super();
+
+			COUNT++;
+
+			trace("TodoItemRenderer", count);
+
+//			this.height = 600;
 			this.itemHasIcon = false;
 			this.itemHasAccessory = false;
 		}

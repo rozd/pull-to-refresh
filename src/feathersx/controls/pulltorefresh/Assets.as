@@ -70,7 +70,7 @@ public class Assets
 
     private static function createTextureFromGlyph(glyph:String, options:Object=null):Texture
     {
-        var format:ElementFormat = new ElementFormat(FONT_DESCRIPTION, 25, 0xEEEEEE);
+        var format:ElementFormat = new ElementFormat(FONT_DESCRIPTION, 25, 0x0000CC);
 
         if (options != null)
         {

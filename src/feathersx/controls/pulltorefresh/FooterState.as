@@ -25,6 +25,11 @@ public class FooterState
     public static const LOADING:String  = "loading";
 
     /**
+     * Indicates state when loading is complete (succeeded or failed).
+     */
+    public static const FREE:String     = "free";
+
+    /**
      * Indicates state when there is no more data on the Server to proceed.
      */
     public static const DONE:String     = "done";

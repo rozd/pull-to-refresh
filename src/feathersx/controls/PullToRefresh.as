@@ -72,7 +72,7 @@ public class PullToRefresh extends PullToRefreshBase
             prependDataFunction = Provider(_dataProvider).prependDataFunction;
         }
 
-        load();
+        invalidate(INVALIDATION_FLAG_ITEMS);
     }
 
     //--------------------------------------------------------------------------
@@ -81,9 +81,9 @@ public class PullToRefresh extends PullToRefreshBase
     //
     //--------------------------------------------------------------------------
 
-    private function dataProvider_reloadHandler(event:Event):void
+    protected function dataProvider_reloadHandler(event:Event):void
     {
-        load();
+        invalidate(INVALIDATION_FLAG_ITEMS);
     }
 }
 }

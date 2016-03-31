@@ -13,6 +13,8 @@ import feathersx.controls.pulltorefresh.Assets;
 import feathersx.controls.pulltorefresh.Header;
 import feathersx.controls.pulltorefresh.HeaderState;
 
+import flash.debugger.enterDebugger;
+
 import flash.geom.Rectangle;
 
 import starling.animation.Tween;

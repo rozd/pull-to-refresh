@@ -1,10 +1,16 @@
 package
 {
+import feathers.examples.todos.ClassUtil;
 import feathers.examples.todos.Main;
 import feathers.examples.todos.Content;
+import feathers.examples.todos.sandbox.A;
+import feathers.examples.todos.sandbox.C;
 
-	import flash.display.Loader;
-	import flash.display.Sprite;
+import flash.display.DisplayObject;
+
+import flash.display.Loader;
+import flash.display.MovieClip;
+import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageOrientation;
 	import flash.display.StageScaleMode;
@@ -30,7 +36,11 @@ import feathers.examples.todos.Content;
 			}
 			this.mouseEnabled = this.mouseChildren = false;
 			this.showLaunchImage();
-			this.loaderInfo.addEventListener(Event.COMPLETE, loaderInfo_completeHandler);
+//			this.loaderInfo.addEventListener(Event.COMPLETE, loaderInfo_completeHandler);
+			loaderInfo_completeHandler(null);
+
+
+            trace(">>>", ClassUtil.compare(new A(), new C()));
 		}
 
 		private var _starling:Starling;

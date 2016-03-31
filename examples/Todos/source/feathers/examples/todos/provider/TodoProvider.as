@@ -97,7 +97,7 @@ public class TodoProvider extends ListCollection implements Provider
                 items.push(item);
             }
 
-            Promise.delay(items, 1000).then(complete).otherwise(errorHandler);
+            Promise.delay(items, 10).then(complete).otherwise(errorHandler);
         }
     }
 
@@ -127,7 +127,7 @@ public class TodoProvider extends ListCollection implements Provider
                 }
             }
 
-            Promise.delay(items, 1000).then(resultHandler).otherwise(errorHandler);
+            Promise.delay(items, 10).then(resultHandler).otherwise(errorHandler);
         }
     }
 

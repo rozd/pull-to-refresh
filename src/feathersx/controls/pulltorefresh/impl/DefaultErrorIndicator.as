@@ -50,6 +50,8 @@ public class DefaultErrorIndicator extends FeathersControl implements ErrorIndic
         addChild(icon);
 
         label = new Label();
+        label.wordWrap = true;
+        label.textRendererProperties.wordWrap = true;
         addChild(label);
     }
 
