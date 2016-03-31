@@ -2,8 +2,8 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="pull-to-refresh">
     <configurations>
-      <configuration name="pull-to-refresh" pure-as="true" output-type="Library" output-file="pull-to-refresh.swc" output-folder="$MODULE_DIR$/../../mobitile/client/mobitile/out/production/pull-to-refresh">
-        <dependencies target-player="19.0">
+      <configuration name="pull-to-refresh" pure-as="true" output-type="Library" output-file="pull-to-refresh.swc" output-folder="$MODULE_DIR$/../mobitile/client/mobitile/out/production/pull-to-refresh">
+        <dependencies target-player="20.0">
           <entries>
             <entry module-name="feathers" build-configuration-name="feathers">
               <dependency linkage="Merged" />
@@ -12,7 +12,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="19.0.0" />
+          <sdk name="20.0.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -28,7 +28,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="19.0.0" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="20.0.0" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="feathers" exported="" />
     <orderEntry type="module" module-name="starling" exported="" />
