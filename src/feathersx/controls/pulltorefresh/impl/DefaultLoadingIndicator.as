@@ -9,7 +9,7 @@ package feathersx.controls.pulltorefresh.impl
 {
 import feathers.core.FeathersControl;
 
-import feathersx.controls.pulltorefresh.Assets;
+import feathersx.controls.pulltorefresh.impl.DefaultAssets;
 
 import starling.animation.Tween;
 import starling.core.Starling;
@@ -29,7 +29,7 @@ public class DefaultLoadingIndicator extends FeathersControl
     {
         super.initialize();
 
-        spinner = new Image(Assets.spinner({fontSize:48, color:0x666666}));
+        spinner = new Image(DefaultAssets.spinner);
         spinner.pivotX = spinner.width / 2;
         spinner.pivotY = spinner.height / 2;
         addChild(spinner);

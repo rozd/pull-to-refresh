@@ -11,12 +11,13 @@ import feathers.core.FeathersControl;
 
 import feathersx.controls.pulltorefresh.Footer;
 import feathersx.controls.pulltorefresh.FooterState;
-import feathersx.controls.pulltorefresh.Assets;
+import feathersx.controls.pulltorefresh.impl.DefaultAssets;
 
 import flash.geom.Rectangle;
 
 import starling.animation.Tween;
 import starling.core.Starling;
+import starling.display.DisplayObject;
 import starling.display.Image;
 import starling.display.Quad;
 
@@ -39,9 +40,9 @@ public class DefaultFooter extends FeathersControl implements Footer
     //
     //--------------------------------------------------------------------------
 
-    protected var spinner:Image;
+    protected var spinner:DisplayObject;
 
-    protected var background:Quad;
+    protected var background:DisplayObject;
 
     protected var spinnerTween:Tween;
 
@@ -80,13 +81,12 @@ public class DefaultFooter extends FeathersControl implements Footer
     {
         // background
 
-        background = new Quad(10, 10, 0xAAAAAA);
-        background.alpha = 0.2;
+        background = createBackground();
         addChild(background);
 
         // spinner
 
-        spinner = new Image(Assets.spinner());
+        spinner = createSpinner();
         spinner.pivotX = spinner.width / 2;
         spinner.pivotY = spinner.height / 2;
         spinner.visible = false;
@@ -177,9 +177,30 @@ public class DefaultFooter extends FeathersControl implements Footer
     //
     //--------------------------------------------------------------------------
 
+    //-------------------------------------
+    //  Methods: API
+    //-------------------------------------
+
     public function get footerHeight():Number
     {
         return 40;
+    }
+
+    //-------------------------------------
+    //  Methods: Internal
+    //-------------------------------------
+
+    protected function createBackground():DisplayObject
+    {
+        var background:Quad = new Quad(100, 100, 0xAAAAAA);
+        background.alpha = 0.2;
+
+        return background;
+    }
+
+    protected function createSpinner():DisplayObject
+    {
+        return new Image(DefaultAssets.headerSpinner);
     }
 }
 }

@@ -9,7 +9,7 @@ package feathersx.controls.pulltorefresh.impl
 {
 import feathers.core.FeathersControl;
 
-import feathersx.controls.pulltorefresh.Assets;
+import feathersx.controls.pulltorefresh.impl.DefaultAssets;
 import feathersx.controls.pulltorefresh.Header;
 import feathersx.controls.pulltorefresh.HeaderState;
 
@@ -19,7 +19,9 @@ import flash.geom.Rectangle;
 
 import starling.animation.Tween;
 import starling.core.Starling;
+import starling.display.DisplayObject;
 import starling.display.Image;
+import starling.display.Quad;
 import starling.display.Quad;
 
 public class DefaultHeader extends FeathersControl implements Header
@@ -47,11 +49,11 @@ public class DefaultHeader extends FeathersControl implements Header
     //
     //--------------------------------------------------------------------------
 
-    protected var arrow:Image;
+    protected var arrow:DisplayObject;
 
-    protected var spinner:Image;
+    protected var spinner:DisplayObject;
 
-    protected var background:Quad;
+    protected var background:DisplayObject;
 
     protected var spinnerTween:Tween;
 
@@ -91,13 +93,12 @@ public class DefaultHeader extends FeathersControl implements Header
 
         // background
 
-        background = new Quad(10, 10, 0xAAAAAA);
-        background.alpha = 0.2;
+        background = createBackground();
         addChild(background);
 
         // arrow
 
-        arrow = new Image(Assets.arrow());
+        arrow = createArrow();
         arrow.pivotX = arrow.width / 2;
         arrow.pivotY = arrow.height / 2;
         arrow.visible = false;
@@ -105,7 +106,7 @@ public class DefaultHeader extends FeathersControl implements Header
 
         // spinner
 
-        spinner = new Image(Assets.spinner());
+        spinner = createSpinner();
         spinner.pivotX = spinner.width / 2;
         spinner.pivotY = spinner.height / 2;
         spinner.visible = false;
@@ -200,9 +201,35 @@ public class DefaultHeader extends FeathersControl implements Header
     //
     //--------------------------------------------------------------------------
 
+    //-------------------------------------
+    //  Methods: API
+    //-------------------------------------
+
     public function get headerHeight():Number
     {
         return 52;
+    }
+
+    //-------------------------------------
+    //  Methods: Internal
+    //-------------------------------------
+
+    protected function createBackground():DisplayObject
+    {
+        var background:Quad = new Quad(100, 100, 0xAAAAAA);
+        background.alpha = 0.2;
+
+        return background;
+    }
+
+    protected function createArrow():DisplayObject
+    {
+        return new Image(DefaultAssets.headerArrow);
+    }
+
+    protected function createSpinner():DisplayObject
+    {
+        return new Image(DefaultAssets.headerSpinner);
     }
 }
 }

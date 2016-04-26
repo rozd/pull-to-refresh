@@ -12,7 +12,7 @@ import feathers.core.FeathersControl;
 
 import feathersx.controls.pulltorefresh.ErrorIndicator;
 
-import feathersx.controls.pulltorefresh.Assets;
+import feathersx.controls.pulltorefresh.impl.DefaultAssets;
 
 import starling.display.Image;
 
@@ -44,7 +44,7 @@ public class DefaultErrorIndicator extends FeathersControl implements ErrorIndic
     {
         super.initialize();
 
-        icon = new Image(Assets.warning({fontSize : 48, color : 0x666666}));
+        icon = new Image(DefaultAssets.errorState);
         icon.pivotX = icon.width / 2;
         icon.pivotY = icon.height / 2;
         addChild(icon);

@@ -12,7 +12,7 @@ import feathers.core.FeathersControl;
 
 import feathersx.controls.pulltorefresh.EmptyIndicator;
 
-import feathersx.controls.pulltorefresh.Assets;
+import feathersx.controls.pulltorefresh.impl.DefaultAssets;
 
 import starling.display.Image;
 
@@ -45,7 +45,7 @@ public class DefaultEmptyIndicator extends FeathersControl implements EmptyIndic
     {
         super.initialize();
 
-        icon = new Image(Assets.inbox({fontSize : 48, color : 0x666666}));
+        icon = new Image(DefaultAssets.emptyState);
         icon.pivotX = icon.width / 2;
         icon.pivotY = icon.height / 2;
         addChild(icon);
