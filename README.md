@@ -1,7 +1,7 @@
 pull-to-refresh
 ===============
 
-"Pull to Refresh" and "Infinity List" implementation for Feathers
+"Pull to Refresh" and "Infinite List" implementation for Feathers
 
 ## Features
 * Pull to Refresh for latest items
