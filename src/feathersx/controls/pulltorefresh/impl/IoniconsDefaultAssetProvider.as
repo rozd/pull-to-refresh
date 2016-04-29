@@ -28,12 +28,12 @@ public class IoniconsDefaultAssetProvider implements DefaultAssetsProvider
     //
     //--------------------------------------------------------------------------
 
-    [Embed(source="/fonts/ionicons.ttf", fontName="IoniconsEmbedded", mimeType="application/x-font-truetype",
+    [Embed(source="/fonts/ionicons.ttf", fontName="IoniconsPullToRefresh", mimeType="application/x-font-truetype",
         embedAsCFF="true", fontStyle="normal", fontWeight="normal", unicodeRange="U+F428, U+F366, U+F100, U+F29C")]
     private static const IONICONS:Class;
 
     private static const FONT_DESCRIPTION:FontDescription =
-        new FontDescription("IoniconsEmbedded", FontWeight.NORMAL, FontPosture.NORMAL, FontLookup.EMBEDDED_CFF);
+        new FontDescription("IoniconsPullToRefresh", FontWeight.NORMAL, FontPosture.NORMAL, FontLookup.EMBEDDED_CFF);
    
     //--------------------------------------------------------------------------
     //
