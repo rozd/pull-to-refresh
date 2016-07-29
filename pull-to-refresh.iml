@@ -2,7 +2,7 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="pull-to-refresh">
     <configurations>
-      <configuration name="pull-to-refresh" pure-as="true" output-type="Library" output-file="pull-to-refresh.swc" output-folder="$MODULE_DIR$/../mobitile/client/mobitile/out/production/pull-to-refresh">
+      <configuration name="pull-to-refresh" pure-as="true" output-type="Library" output-file="pull-to-refresh.swc" output-folder="$MODULE_DIR$/bin">
         <dependencies target-player="20.0">
           <entries>
             <entry module-name="feathers" build-configuration-name="feathers">
