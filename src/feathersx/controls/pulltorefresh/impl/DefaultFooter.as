@@ -166,8 +166,6 @@ public class DefaultFooter extends FeathersControl implements Footer
 
             background.width = actualWidth;
             background.height = actualHeight;
-
-            clipRect = new Rectangle(0, 0, actualWidth, actualHeight);
         }
     }
 

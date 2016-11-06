@@ -190,8 +190,6 @@ public class DefaultHeader extends FeathersControl implements Header
 
             background.width = actualWidth;
             background.height = actualHeight;
-
-            clipRect = new Rectangle(0, 0, actualWidth, actualHeight);
         }
     }
 

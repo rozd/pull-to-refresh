@@ -686,6 +686,10 @@ public class PullToRefreshBase extends List
         var itemsInvalid:Boolean = isInvalid(INVALIDATION_FLAG_ITEMS);
         var sizeInvalid:Boolean = isInvalid(INVALIDATION_FLAG_SIZE);
         var stateInvalid:Boolean = isInvalid(INVALIDATION_FLAG_STATE);
+        var scrollInvalid:Boolean = isInvalid(INVALIDATION_FLAG_SCROLL);
+        var stylesInvalid:Boolean = isInvalid(INVALIDATION_FLAG_STYLES);
+        var scrollBarInvalid:Boolean = isInvalid(INVALIDATION_FLAG_SCROLL_BAR_RENDERER);
+        var clippingInvalid:Boolean = isInvalid(INVALIDATION_FLAG_CLIPPING);
         var headerInvalid:Boolean = isInvalid(INVALIDATION_FLAG_HEADER);
         var footerInvalid:Boolean = isInvalid(INVALIDATION_FLAG_FOOTER);
 
@@ -744,13 +748,28 @@ public class PullToRefreshBase extends List
             doResetFreeHeader();
         }
 
+        var oldMaxHorizontalScrollPosition:Number = this._maxHorizontalScrollPosition;
+        var oldMaxVerticalScrollPosition:Number = this._maxVerticalScrollPosition;
+
         super.draw();
+
+        if (oldMaxHorizontalScrollPosition != _maxHorizontalScrollPosition)
+        {
+            scrollInvalid = true;
+        }
+        if (oldMaxVerticalScrollPosition != _maxVerticalScrollPosition)
+        {
+            scrollInvalid = true;
+        }
+
+        if (scrollInvalid || sizeInvalid || stylesInvalid || scrollBarInvalid || clippingInvalid)
+        {
+            refreshHeaderFooter();
+        }
     }
 
-    override protected function refreshClipRect():void
+    protected function refreshHeaderFooter():void
     {
-        super.refreshClipRect();
-
         if (header)
         {
             var headerAsDisplayObject:DisplayObject = header as DisplayObject;
