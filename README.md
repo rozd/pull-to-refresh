@@ -1,7 +1,6 @@
 pull-to-refresh
 ===============
-
-"Pull to Refresh" and "Infinite List" implementation for Feathers
+"Pull to Refresh" and "Infinite List" implementation for Feathers UI on Starling Framework. Now supports Starling 2.0 and Feathers 3.0
 
 ## Features
 * Pull to Refresh for latest items
