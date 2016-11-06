@@ -20,10 +20,15 @@
           </entries>
           <sdk name="19.0.0" />
         </dependencies>
-        <compiler-options />
+        <compiler-options>
+          <map>
+            <entry key="compiler.debug.swf" value="false" />
+          </map>
+          <option name="additionalOptions" value="-advanced-telemetry=true" />
+        </compiler-options>
         <packaging-air-desktop />
         <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/source/Todos-app.xml" package-file-name="Todos" />
-        <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/source/Todos-app.xml" package-file-name="Todos">
+        <packaging-ios use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/source/Todos-app.xml" package-file-name="Todos">
           <AirSigningOptions keystore-path="$USER_HOME$/cert/max.rozdobudko.p12" provisioning-profile-path="$USER_HOME$/cert/max.rozdobudko.mobileprovision" />
         </packaging-ios>
       </configuration>

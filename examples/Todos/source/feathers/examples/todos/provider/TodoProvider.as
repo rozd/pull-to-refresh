@@ -63,6 +63,16 @@ public class TodoProvider extends ListCollection implements Provider
 
     public function get insertEarlierItemsFunction():Function {return null;}
 
+    public function get supportsRecents():Boolean
+    {
+        return true;
+    }
+
+    public function get supportsEarlier():Boolean
+    {
+        return true;
+    }
+
     //--------------------------------------------------------------------------
     //
     //  Methods
