@@ -57,11 +57,11 @@ public class TodoProvider extends ListCollection implements Provider
     //
     //--------------------------------------------------------------------------
 
-    public function get insertDataFunction():Function {return null;}
+    public function get insertInitialItemsFunction():Function {return null;}
 
-    public function get appendDataFunction():Function {return null;}
+    public function get insertRecentItemsFunction():Function {return null;}
 
-    public function get prependDataFunction():Function {return null;}
+    public function get insertEarlierItemsFunction():Function {return null;}
 
     //--------------------------------------------------------------------------
     //
@@ -69,7 +69,7 @@ public class TodoProvider extends ListCollection implements Provider
     //
     //--------------------------------------------------------------------------
 
-    public function load(resultHandler:Function, errorHandler:Function):void
+    public function initial(resultHandler:Function, errorHandler:Function):void
     {
         if (simulateError)
         {
@@ -101,7 +101,7 @@ public class TodoProvider extends ListCollection implements Provider
         }
     }
 
-    public function refresh(resultHandler:Function, errorHandler:Function):void
+    public function recents(resultHandler:Function, errorHandler:Function):void
     {
         if (simulateError)
         {
@@ -131,7 +131,7 @@ public class TodoProvider extends ListCollection implements Provider
         }
     }
 
-    public function proceed(resultHandler:Function, errorHandler:Function):void
+    public function earlier(resultHandler:Function, errorHandler:Function):void
     {
         if (simulateError)
         {

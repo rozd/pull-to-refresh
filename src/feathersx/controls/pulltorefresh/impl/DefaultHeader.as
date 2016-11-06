@@ -16,6 +16,7 @@ import feathersx.controls.pulltorefresh.HeaderState;
 import flash.debugger.enterDebugger;
 
 import flash.geom.Rectangle;
+import flash.utils.getTimer;
 
 import starling.animation.Tween;
 import starling.core.Starling;
@@ -111,6 +112,10 @@ public class DefaultHeader extends FeathersControl implements Header
         spinner.pivotY = spinner.height / 2;
         spinner.visible = false;
         addChild(spinner);
+
+        // mask
+
+        this.mask = new Quad(10, 10);
     }
 
     override protected function draw():void
@@ -147,6 +152,8 @@ public class DefaultHeader extends FeathersControl implements Header
                     arrow.visible = false;
                     spinner.visible = true;
 
+                        trace("startTween", getTimer());
+
                     spinner.rotation = 0;
 
                     spinnerTween = new Tween(spinner, 0.5);
@@ -161,6 +168,8 @@ public class DefaultHeader extends FeathersControl implements Header
 
                     arrow.visible = false;
                     spinner.visible = true;
+
+                    trace("stopTween", getTimer());
 
                     Starling.juggler.remove(spinnerTween);
                     spinnerTween = null;
@@ -190,6 +199,9 @@ public class DefaultHeader extends FeathersControl implements Header
 
             background.width = actualWidth;
             background.height = actualHeight;
+
+            this.mask.width = actualWidth;
+            this.mask.height = actualHeight;
         }
     }
 

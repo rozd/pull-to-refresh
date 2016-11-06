@@ -29,7 +29,7 @@ public class IoniconsDefaultAssetProvider implements DefaultAssetsProvider
     //--------------------------------------------------------------------------
 
     [Embed(source="/fonts/ionicons.ttf", fontName="IoniconsPullToRefresh", mimeType="application/x-font-truetype",
-        embedAsCFF="true", fontStyle="normal", fontWeight="normal", unicodeRange="U+F428, U+F366, U+F100, U+F29C")]
+        embedAsCFF="true", fontStyle="normal", fontWeight="normal", unicodeRange="U+F428, U+F366, U+F100, U+F29C, U+F35D")]
     private static const IONICONS:Class;
 
     private static const FONT_DESCRIPTION:FontDescription =
@@ -64,7 +64,7 @@ public class IoniconsDefaultAssetProvider implements DefaultAssetsProvider
 
     private var inbox:Texture = createTextureFromGlyph("\uF428", {fontSize : 48, color : 0x666666});
 
-    private var arrow:Texture = createTextureFromGlyph("\uF366");
+    private var arrow:Texture = createTextureFromGlyph("\uF35D");
 
     private var warning:Texture = createTextureFromGlyph("\uF100", {fontSize : 48, color : 0x666666});
 

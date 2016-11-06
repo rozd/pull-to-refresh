@@ -91,6 +91,8 @@ public class DefaultFooter extends FeathersControl implements Footer
         spinner.pivotY = spinner.height / 2;
         spinner.visible = false;
         addChild(spinner);
+
+        this.mask = new Quad(10, 10);
     }
 
     override protected function draw():void
@@ -166,6 +168,9 @@ public class DefaultFooter extends FeathersControl implements Footer
 
             background.width = actualWidth;
             background.height = actualHeight;
+
+            this.mask.width = actualWidth;
+            this.mask.height = actualHeight;
         }
     }
 

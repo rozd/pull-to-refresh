@@ -16,31 +16,41 @@ public interface Provider
     /**
      * Returns function that overrides default function for insert initial items.
      */
-    function get insertDataFunction():Function;
+    function get insertInitialItemsFunction():Function;
 
     /**
      * Returns function that overrides default function for append new items.
      */
-    function get appendDataFunction():Function;
+    function get insertRecentItemsFunction():Function;
 
     /**
      * Returns function that overrides default function for prepend earlier items.
      */
-    function get prependDataFunction():Function;
+    function get insertEarlierItemsFunction():Function;
+
+    /**
+     * Indicates if Provider has function to load recent items.
+     */
+    function get supportsRecents():Boolean;
+
+    /**
+     * Indicates if Provider has function to load previous items.
+     */
+    function get supportsEarlier():Boolean;
 
     /**
      * Loads initial items
      */
-    function load(resultHandler:Function, errorHandler:Function):void;
+    function initial(resultHandler:Function, errorHandler:Function):void;
 
     /**
      * Loads new items
      */
-    function refresh(resultHandler:Function, errorHandler:Function):void;
+    function recents(resultHandler:Function, errorHandler:Function):void;
 
     /**
      * Loads old items
      */
-    function proceed(resultHandler:Function, errorHandler:Function):void;
+    function earlier(resultHandler:Function, errorHandler:Function):void;
 }
 }

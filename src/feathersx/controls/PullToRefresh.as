@@ -8,6 +8,7 @@
 package feathersx.controls
 {
 import feathers.data.ListCollection;
+import feathers.skins.IStyleProvider;
 
 import feathersx.controls.pulltorefresh.Provider;
 
@@ -19,6 +20,23 @@ import starling.events.EventDispatcher;
 
 public class PullToRefresh extends PullToRefreshBase
 {
+    //--------------------------------------------------------------------------
+    //
+    //  Class variables
+    //
+    //--------------------------------------------------------------------------
+
+    /**
+     * The default <code>IStyleProvider</code> for all <code>ToggleButton</code>
+     * components. If <code>null</code>, falls back to using
+     * <code>Button.globalStyleProvider</code> instead.
+     *
+     * @default null
+     * @see feathers.core.FeathersControl#styleProvider
+     * @see feathers.controls.Button#globalStyleProvider
+     */
+    public static var globalStyleProvider:IStyleProvider;
+
     //--------------------------------------------------------------------------
     //
     //  Constructor
@@ -37,6 +55,19 @@ public class PullToRefresh extends PullToRefreshBase
     //  Overridden properties
     //
     //--------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    override protected function get defaultStyleProvider():IStyleProvider
+    {
+        if (PullToRefresh.globalStyleProvider != null)
+        {
+            return PullToRefresh.globalStyleProvider;
+        }
+
+        return super.defaultStyleProvider;
+    }
 
     override public function set dataProvider(value:ListCollection):void
     {
@@ -63,13 +94,23 @@ public class PullToRefresh extends PullToRefreshBase
 
         if (_dataProvider is Provider)
         {
-            loadFunction = Provider(_dataProvider).load;
-            refreshFunction = Provider(_dataProvider).refresh;
-            proceedFunction = Provider(_dataProvider).proceed;
+            var provider:Provider = _dataProvider as Provider;
 
-            insertDataFunction = Provider(_dataProvider).insertDataFunction;
-            appendDataFunction = Provider(_dataProvider).appendDataFunction;
-            prependDataFunction = Provider(_dataProvider).prependDataFunction;
+            loadFunction = provider.initial;
+
+            if (provider.supportsRecents)
+            {
+                refreshFunction = Provider(_dataProvider).recents;
+            }
+
+            if (provider.supportsEarlier)
+            {
+                proceedFunction = Provider(_dataProvider).earlier;
+            }
+
+            insertDataFunction = Provider(_dataProvider).insertInitialItemsFunction;
+            appendDataFunction = Provider(_dataProvider).insertRecentItemsFunction;
+            prependDataFunction = Provider(_dataProvider).insertEarlierItemsFunction;
         }
 
         invalidate(INVALIDATION_FLAG_ITEMS);
