@@ -73,7 +73,7 @@ public class Content extends PanelScreen
         if(!this._toolbar)
         {
             this._toolbar = new ScrollContainer();
-            this._toolbar.styleNameList.add(ScrollContainer.ALTERNATE_NAME_TOOLBAR);
+            this._toolbar.styleNameList.add(ScrollContainer.ALTERNATE_STYLE_NAME_TOOLBAR);
         }
         else
         {
@@ -99,7 +99,7 @@ public class Content extends PanelScreen
         if(!this._settingsButton)
         {
             this._settingsButton = new Button();
-            this._settingsButton.styleNameList.add(Button.ALTERNATE_NAME_FORWARD_BUTTON);
+            this._settingsButton.styleNameList.add(Button.ALTERNATE_STYLE_NAME_FORWARD_BUTTON);
             this._settingsButton.label = "Settings";
             this._settingsButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
         }

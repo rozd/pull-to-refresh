@@ -107,7 +107,6 @@ import flash.display.Sprite;
 
 		private function loaderInfo_completeHandler(event:Event):void
 		{
-			Starling.handleLostContext = true;
 			Starling.multitouchEnabled = true;
 			this._starling = new Starling(Main, this.stage);
 			this._starling.enableErrorChecking = false;
