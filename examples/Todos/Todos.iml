@@ -17,13 +17,13 @@
             <entry module-name="pull-to-refresh" build-configuration-name="pull-to-refresh">
               <dependency linkage="Merged" />
             </entry>
+            <entry library-id="64da4929-5c45-4a40-861d-9d033e051a06">
+              <dependency linkage="Merged" />
+            </entry>
           </entries>
           <sdk name="19.0.0" />
         </dependencies>
         <compiler-options>
-          <map>
-            <entry key="compiler.debug.swf" value="false" />
-          </map>
           <option name="additionalOptions" value="-advanced-telemetry=true" />
         </compiler-options>
         <packaging-air-desktop />
@@ -67,5 +67,16 @@
     <orderEntry type="module" module-name="starling" exported="" />
     <orderEntry type="module" module-name="promise-as3" exported="" />
     <orderEntry type="module" module-name="pull-to-refresh" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="64da4929-5c45-4a40-861d-9d033e051a06" />
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../../tagxit/tagxit/ane" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../../../../tagxit/tagxit/ane" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>

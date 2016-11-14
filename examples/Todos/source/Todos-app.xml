@@ -7,6 +7,11 @@
 	<description>Todos example application built with Feathers UI controls for Starling</description>
 	<copyright>2014 Josh Tynjala</copyright>
 
+	<!--<extensions>-->
+		<!--<extensionID>com.github.airext.Bridge</extensionID>-->
+		<!--<extensionID>ae.centric.air.extension.photos</extensionID>-->
+	<!--</extensions>-->
+
 	<initialWindow>
 		<content>Todos.swf</content>
 		<autoOrients>true</autoOrients>

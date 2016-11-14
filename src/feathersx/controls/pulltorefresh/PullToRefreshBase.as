@@ -1391,7 +1391,7 @@ public class PullToRefreshBase extends List
         }
         else
         {
-            _errorString = String(error);
+            _errorString = error ? error.message : String(error);
 
             setCurrentState(STATE_ERROR);
         }
