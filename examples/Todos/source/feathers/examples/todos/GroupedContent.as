@@ -1,40 +1,33 @@
 package feathers.examples.todos
 {
-import feathers.controls.Alert;
 import feathers.controls.Button;
-import feathers.controls.Callout;
 import feathers.controls.Header;
 import feathers.controls.PanelScreen;
-import feathers.controls.PickerList;
 import feathers.controls.ScrollContainer;
 import feathers.controls.TextInput;
 import feathers.controls.ToggleButton;
-import feathers.data.ListCollection;
 import feathers.events.FeathersEventType;
-import feathers.examples.todos.Settings;
-import feathers.examples.todos.controls.TodoItemRenderer;
-import feathers.examples.todos.provider.TodoProvider;
+import feathers.examples.todos.controls.GroupedTodoItemRenderer;
+import feathers.examples.todos.provider.GroupedTodoProvider;
 import feathers.layout.AnchorLayout;
 import feathers.layout.AnchorLayoutData;
 import feathers.layout.VerticalLayout;
-import feathers.themes.MetalWorksMobileTheme;
 
-import feathersx.controls.PullToRefresh;
-import feathersx.controls.pulltorefresh.BounceBackMode;
+import feathersx.controls.GroupedPullToRefresh;
 
 import starling.display.DisplayObject;
 import starling.events.Event;
 
-public class Content extends PanelScreen
+public class GroupedContent extends PanelScreen
 {
-    public function Content()
+    public function GroupedContent()
     {
         this.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
         this.addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
     }
 
-    public var provider:TodoProvider = new TodoProvider();
-    public var list:PullToRefresh = new PullToRefresh();
+    public var provider:GroupedTodoProvider = new GroupedTodoProvider();
+    public var list:GroupedPullToRefresh = new GroupedPullToRefresh();
 
     private var _input:TextInput;
     private var _editButton:ToggleButton;
@@ -127,7 +120,7 @@ public class Content extends PanelScreen
         this.list.layout = l;
         this.list.isSelectable = false;
         this.list.dataProvider = provider;
-        this.list.itemRendererType = TodoItemRenderer;
+        this.list.itemRendererType = GroupedTodoItemRenderer;
         this.list.itemRendererProperties.labelField = "description";
         var listLayoutData:AnchorLayoutData = new AnchorLayoutData(0, 0, 0, 0);
         listLayoutData.topAnchorDisplayObject = this._input;
@@ -152,7 +145,7 @@ public class Content extends PanelScreen
             return;
         }
 
-        this.list.dataProvider.addItem(new TodoItem(this._input.text));
+        this.list.dataProvider.addItemAt(new TodoItem(this._input.text), 0);
         this._input.text = "";
     }
 

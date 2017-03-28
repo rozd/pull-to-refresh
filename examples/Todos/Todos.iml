@@ -14,6 +14,12 @@
             <entry module-name="promise-as3" build-configuration-name="promise-as3">
               <dependency linkage="Merged" />
             </entry>
+            <entry module-name="pull-to-refresh" build-configuration-name="pull-to-refresh">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="7824957f-4895-43f8-be0c-dce2145e5abf">
+              <dependency linkage="Merged" />
+            </entry>
           </entries>
           <sdk name="20.0.0" />
         </dependencies>
@@ -30,10 +36,16 @@
             <entry module-name="feathers" build-configuration-name="feathers">
               <dependency linkage="Merged" />
             </entry>
+            <entry module-name="starling" build-configuration-name="starling">
+              <dependency linkage="Merged" />
+            </entry>
             <entry module-name="promise-as3" build-configuration-name="promise-as3">
               <dependency linkage="Merged" />
             </entry>
-            <entry module-name="starling" build-configuration-name="starling">
+            <entry module-name="pull-to-refresh" build-configuration-name="pull-to-refresh">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="c997a89c-27c2-4af3-83b7-c546d1c4ea10">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -57,5 +69,28 @@
     <orderEntry type="module" module-name="feathers" exported="" />
     <orderEntry type="module" module-name="starling" exported="" />
     <orderEntry type="module" module-name="promise-as3" exported="" />
+    <orderEntry type="module" module-name="pull-to-refresh" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="c997a89c-27c2-4af3-83b7-c546d1c4ea10" />
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="7824957f-4895-43f8-be0c-dce2145e5abf" />
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>

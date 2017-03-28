@@ -13,13 +13,15 @@ public class Main extends Drawers
     {
         super();
 
-        var content:Content = new Content();
+        var content:GroupedContent = new GroupedContent();
 
         this.content = content;
 
         var settings:Settings = new Settings();
-        settings.provider = content.provider;
-        settings.pullToRefresh = content.list;
+//        settings.provider = content.provider;
+//        settings.pullToRefresh = content.list;
+        settings.groupedProvider = content.provider;
+        settings.groupedPullToRefresh = content.list;
 
         this.rightDrawer = settings;
 
