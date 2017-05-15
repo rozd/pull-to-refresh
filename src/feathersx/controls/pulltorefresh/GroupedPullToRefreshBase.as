@@ -1185,7 +1185,7 @@ public class GroupedPullToRefreshBase extends GroupedList
             var groupIndex:int = _dataProvider.getLength() - 1;
             groupIndex = groupIndex < 0 ? 0 : groupIndex;
 
-            var itemIndex:int = _dataProvider.getLength(groupIndex) - 1;
+            var itemIndex:int = _dataProvider.getLength(groupIndex);
             itemIndex = itemIndex < 0 ? 0 : itemIndex;
 
             for (var i:int = 0, n:int = items ? items.length : 0; i < n; i++)
