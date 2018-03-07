@@ -20,6 +20,9 @@
             <entry library-id="7824957f-4895-43f8-be0c-dce2145e5abf">
               <dependency linkage="Merged" />
             </entry>
+            <entry module-name="skein" build-configuration-name="skein">
+              <dependency linkage="Merged" />
+            </entry>
           </entries>
           <sdk name="20.0.0" />
         </dependencies>
@@ -27,7 +30,7 @@
         <packaging-air-desktop />
         <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/source/Todos-app.xml" package-file-name="Todos" />
         <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/source/Todos-app.xml" package-file-name="Todos">
-          <AirSigningOptions keystore-path="$USER_HOME$/cert/max.rozdobudko.p12" provisioning-profile-path="$USER_HOME$/cert/max.rozdobudko.mobileprovision" />
+          <AirSigningOptions keystore-path="$USER_HOME$/cert/rozd/max.rozdobudko.dev.p12" provisioning-profile-path="$USER_HOME$/cert/rozd/whateverdev.mobileprovision" />
         </packaging-ios>
       </configuration>
       <configuration name="Todos (web)" pure-as="true" main-class="TodosWeb" output-file="TodosWeb.swf" output-folder="$MODULE_DIR$/bin" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
@@ -92,5 +95,6 @@
         <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="skein" exported="" />
   </component>
 </module>
