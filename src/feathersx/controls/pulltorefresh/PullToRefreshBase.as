@@ -1121,7 +1121,7 @@ public class PullToRefreshBase extends List
         }
     }
 
-    protected function refreshResult(items:Array, hasNewRecords:Boolean = true):void
+    protected function refreshResult(items:Array, hasNewRecords:Boolean = true, hasOldRecords: * = undefined):void
     {
         if (_appendDataFunction != null)
         {
@@ -1146,6 +1146,11 @@ public class PullToRefreshBase extends List
         this.hasNewRecords = hasNewRecords;
 
         freeHeader();
+
+        if (hasOldRecords !== undefined) {
+            this.hasOldRecords = hasOldRecords;
+            freeFooter();
+        }
 
         invalidate(INVALIDATION_FLAG_DATA);
     }

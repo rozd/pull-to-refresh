@@ -7,11 +7,10 @@
  */
 package feathersx.controls
 {
-import feathers.data.ListCollection;
+import feathers.data.IListCollection;
 import feathers.skins.IStyleProvider;
 
 import feathersx.controls.pulltorefresh.Provider;
-
 import feathersx.controls.pulltorefresh.PullToRefreshBase;
 import feathersx.controls.pulltorefresh.event.ProviderEvent;
 
@@ -69,7 +68,7 @@ public class PullToRefresh extends PullToRefreshBase
         return super.defaultStyleProvider;
     }
 
-    override public function set dataProvider(value:ListCollection):void
+    override public function set dataProvider(value: IListCollection):void
     {
         if (_dataProvider == value) return;
 
