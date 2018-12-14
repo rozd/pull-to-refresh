@@ -8,6 +8,7 @@
 package feathersx.controls.pulltorefresh
 {
 import feathers.controls.List;
+import feathers.data.ArrayCollection;
 import feathers.data.ListCollection;
 import feathers.skins.IStyleProvider;
 
@@ -1044,7 +1045,7 @@ public class PullToRefreshBase extends List
         isLoading = false;
 
         if (_dataProvider == null)
-            _dataProvider = new ListCollection();
+            _dataProvider = new ArrayCollection();
 
         if (_insertDataFunction != null)
         {
@@ -1052,7 +1053,7 @@ public class PullToRefreshBase extends List
         }
         else
         {
-            _dataProvider.data = data;
+            _dataProvider.reset(new ArrayCollection(data));
         }
 
         if (_dataProvider.length == 0)

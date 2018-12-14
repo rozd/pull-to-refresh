@@ -17,13 +17,11 @@ public class ListCollectionAsync extends ListCollection
     //
     //--------------------------------------------------------------------------
 
-    private static function defaultCreatePendingItemFunction(index:int):Object
-    {
+    private static function defaultCreatePendingItemFunction(index: int): Object {
         return "Loading " + index;
     }
 
-    private static function defaultCreateFailedItemFunction(index, reason:Object):Object
-    {
+    private static function defaultCreateFailedItemFunction(index: int, reason: Object): Object {
         return "Error to load item " + index;
     }
 
@@ -97,7 +95,7 @@ public class ListCollectionAsync extends ListCollection
     {
         if (value == _pageSize) return;
         _pageSize = value;
-        reset();
+        removeAll();
     }
 
     //-------------------------------------
@@ -115,7 +113,7 @@ public class ListCollectionAsync extends ListCollection
     {
         if (value == _loadLengthFunction) return;
         _loadLengthFunction = value;
-        reset();
+        removeAll();
     }
 
     //-------------------------------------
@@ -133,7 +131,7 @@ public class ListCollectionAsync extends ListCollection
     {
         if (value == _loadItemsFunction) return;
         _loadItemsFunction = value;
-        reset();
+        removeAll();
     }
 
     //-------------------------------------
@@ -151,7 +149,7 @@ public class ListCollectionAsync extends ListCollection
     {
         if (value == _createPendingItemFunction) return;
         _createPendingItemFunction = value;
-        reset();
+        removeAll();
     }
 
     //-------------------------------------
@@ -169,7 +167,7 @@ public class ListCollectionAsync extends ListCollection
     {
         if (value == _createFailedItemFunction) return;
         _createFailedItemFunction = value;
-        reset();
+        removeAll();
     }
 
     //--------------------------------------------------------------------------
@@ -392,15 +390,6 @@ public class ListCollectionAsync extends ListCollection
             updateItemAt(index + i);
             dispatchEvent(new Event(Event.CHANGE));
         }
-    }
-
-    //-------------------------------------
-    //  Methods: common
-    //-------------------------------------
-
-    protected function reset():void
-    {
-        removeAll();
     }
 }
 }

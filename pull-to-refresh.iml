@@ -2,14 +2,9 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="pull-to-refresh">
     <configurations>
-      <configuration name="pull-to-refresh" pure-as="true" output-type="Library" output-file="pull-to-refresh.swc" output-folder="$MODULE_DIR$/bin">
-        <dependencies target-player="27.0">
-          <entries>
-            <entry library-id="f3c27087-da6d-4cef-9dc0-56bbb28aa111">
-              <dependency linkage="External" />
-            </entry>
-          </entries>
-          <sdk name="27.0.0" />
+      <configuration name="pull-to-refresh" output-type="Library" output-file="pull-to-refresh.swc" output-folder="$MODULE_DIR$/bin">
+        <dependencies target-player="31.0">
+          <sdk name="4.0.0-beta" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -25,18 +20,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="27.0.0" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="4.0.0-beta" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
-        <properties id="f3c27087-da6d-4cef-9dc0-56bbb28aa111" />
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
-      </library>
-    </orderEntry>
   </component>
 </module>
