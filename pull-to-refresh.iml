@@ -3,8 +3,8 @@
   <component name="FlexBuildConfigurationManager" active="pull-to-refresh">
     <configurations>
       <configuration name="pull-to-refresh" output-type="Library" output-file="pull-to-refresh.swc" output-folder="$MODULE_DIR$/bin">
-        <dependencies target-player="31.0">
-          <sdk name="4.0.0-beta" />
+        <dependencies target-player="32.0">
+          <sdk name="4.1.1" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -20,7 +20,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="4.0.0-beta" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="4.1.1" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
